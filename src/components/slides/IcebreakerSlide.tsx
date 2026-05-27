@@ -275,12 +275,17 @@ function UploadingState({
           </button>
         </div>
 
-        <div className="flex w-[240px] flex-col items-center gap-3">
+        <div className="flex w-[260px] flex-col items-center gap-3">
           <div className="rounded-xl bg-white p-3">
             <QRCodeSVG value={voteUrl} size={180} level="M" />
           </div>
-          <div className="text-center text-[10px] uppercase tracking-[0.18em] text-white/65">
-            Sube tu intento
+          <div className="text-center">
+            <div className="text-[10px] uppercase tracking-[0.18em] text-white/65">
+              Sube tu intento
+            </div>
+            <div className="mt-1 break-all text-[12px] font-mono text-white/70">
+              {voteUrl}
+            </div>
           </div>
           <button
             onClick={onReset}
