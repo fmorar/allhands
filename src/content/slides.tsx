@@ -25,14 +25,14 @@ const raw: RawSlide[] = [
   {
     id: "cover",
     build: () => (
-      <CoverSlide title="Bienvenida" variant="red" layoutSeed={0} />
+      <CoverSlide title="Bienvenida" variant="cream" layoutSeed={0} />
     ),
   },
   {
     id: "mood",
     build: () => (
       <MoodSlide
-        variant="red"
+        variant="cream"
         layoutSeed={1}
         question="¿Cómo te sientes hoy?"
       />
@@ -83,7 +83,7 @@ const raw: RawSlide[] = [
   {
     id: "icebreaker",
     build: () => (
-      <IcebreakerSlide variant="red" layoutSeed={2} />
+      <IcebreakerSlide variant="cream" layoutSeed={2} />
     ),
   },
   {
@@ -102,7 +102,7 @@ const raw: RawSlide[] = [
     id: "team-updates-1",
     build: () => (
       <ContentSlide
-        variant="red"
+        variant="cream"
         layoutSeed={0}
         sectionLabel="Team Updates · 01"
         title="What are we doing?"
@@ -235,7 +235,7 @@ const raw: RawSlide[] = [
     id: "closing",
     build: () => (
       <ClosingSlide
-        variant="red"
+        variant="black"
         layoutSeed={0}
         title="Gracias"
         subtitle="Preguntas, ideas, abrazos — todo bienvenido."

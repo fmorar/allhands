@@ -2,28 +2,31 @@
 
 import { createContext, useContext, type ReactNode } from "react";
 import { SlideStage } from "../SlideStage";
-import { PatternFill } from "../library/patterns";
+import {
+  DsPattern,
+  type DsPatternName,
+  type DsTone,
+} from "../library/dsPatterns";
 import { FlowerMark } from "../library/FlowerMark";
 
 type Tone = "loud" | "quiet";
 
 export type PosterVariant =
-  | "red"
-  | "purple"
   | "cream"
   | "black"
+  | "purple"
+  | "red"
   | "gradient-warm"
   | "gradient-cool";
 
 type VariantSpec = {
   background: string;
   text: string;
-  patternA: "red" | "purple" | "black" | "white" | "offwhite";
-  patternB: "red" | "purple" | "black" | "white" | "offwhite";
+  /** DS pattern tone used for the corner motifs. */
+  patternTone: DsTone;
   cardBg: string;
   cardText: string;
   cardOffsetBg: string;
-  accentRed: string;
   outlineStroke: string;
   cityRule: string;
   flowerA: "red" | "purple" | "black" | "white";
@@ -32,150 +35,133 @@ type VariantSpec = {
 };
 
 const VARIANTS: Record<PosterVariant, VariantSpec> = {
-  red: {
-    background: "var(--latam-red)",
-    text: "#ffffff",
-    patternA: "black",
-    patternB: "red",
-    cardBg: "#000000",
-    cardText: "#ffffff",
-    cardOffsetBg: "var(--latam-purple)",
-    accentRed: "var(--latam-red)",
-    outlineStroke: "rgba(255,255,255,0.85)",
-    cityRule: "rgba(255,255,255,0.3)",
-    flowerA: "black",
-    flowerB: "black",
-    flowerC: "white",
-  },
-  purple: {
-    background: "var(--latam-purple)",
-    text: "#ffffff",
-    patternA: "black",
-    patternB: "purple",
+  // Default — calm off-white background, red+purple accents.
+  cream: {
+    background: "var(--latam-offwhite)",
+    text: "#000000",
+    patternTone: "red",
     cardBg: "#000000",
     cardText: "#ffffff",
     cardOffsetBg: "var(--latam-red)",
-    accentRed: "var(--latam-red)",
+    outlineStroke: "rgba(0,0,0,0.65)",
+    cityRule: "rgba(0,0,0,0.18)",
+    flowerA: "red",
+    flowerB: "purple",
+    flowerC: "black",
+  },
+  // High-contrast — black background, red/cream patterns.
+  black: {
+    background: "var(--latam-black)",
+    text: "#ffffff",
+    patternTone: "red",
+    cardBg: "var(--latam-red)",
+    cardText: "#ffffff",
+    cardOffsetBg: "var(--latam-purple)",
+    outlineStroke: "rgba(255,255,255,0.85)",
+    cityRule: "rgba(255,255,255,0.25)",
+    flowerA: "red",
+    flowerB: "white",
+    flowerC: "red",
+  },
+  // Cool — Latam purple with red+light patterns.
+  purple: {
+    background: "var(--latam-purple)",
+    text: "#ffffff",
+    patternTone: "light",
+    cardBg: "#000000",
+    cardText: "#ffffff",
+    cardOffsetBg: "var(--latam-red)",
     outlineStroke: "rgba(255,255,255,0.85)",
     cityRule: "rgba(255,255,255,0.3)",
     flowerA: "white",
     flowerB: "black",
     flowerC: "red",
   },
-  cream: {
-    background: "var(--latam-offwhite)",
-    text: "#000000",
-    patternA: "red",
-    patternB: "offwhite",
+  // Loud — Radiant Red bg (use sparingly). Patterns in dark.
+  red: {
+    background: "var(--latam-red)",
+    text: "#ffffff",
+    patternTone: "dark",
     cardBg: "#000000",
     cardText: "#ffffff",
-    cardOffsetBg: "var(--latam-red)",
-    accentRed: "var(--latam-red)",
-    outlineStroke: "rgba(0,0,0,0.7)",
-    cityRule: "rgba(0,0,0,0.2)",
-    flowerA: "red",
-    flowerB: "purple",
-    flowerC: "black",
-  },
-  black: {
-    background: "var(--latam-black)",
-    text: "#ffffff",
-    patternA: "red",
-    patternB: "black",
-    cardBg: "var(--latam-red)",
-    cardText: "#ffffff",
     cardOffsetBg: "var(--latam-purple)",
-    accentRed: "#ffffff",
     outlineStroke: "rgba(255,255,255,0.85)",
     cityRule: "rgba(255,255,255,0.3)",
-    flowerA: "red",
-    flowerB: "white",
-    flowerC: "red",
+    flowerA: "black",
+    flowerB: "black",
+    flowerC: "white",
   },
   "gradient-warm": {
     background:
-      "linear-gradient(155deg, #e90130 0%, #f7c3cf 70%, #faf9f6 100%)",
+      "linear-gradient(155deg, #faf9f6 0%, #f7c3cf 60%, #e90130 130%)",
     text: "#000000",
-    patternA: "black",
-    patternB: "red",
+    patternTone: "red",
     cardBg: "#000000",
     cardText: "#ffffff",
     cardOffsetBg: "var(--latam-red)",
-    accentRed: "var(--latam-red)",
-    outlineStroke: "rgba(0,0,0,0.75)",
-    cityRule: "rgba(0,0,0,0.25)",
+    outlineStroke: "rgba(0,0,0,0.7)",
+    cityRule: "rgba(0,0,0,0.22)",
     flowerA: "black",
     flowerB: "red",
     flowerC: "purple",
   },
   "gradient-cool": {
     background:
-      "linear-gradient(160deg, #616290 0%, #cfcfe2 60%, #faf9f6 100%)",
+      "linear-gradient(160deg, #faf9f6 0%, #cfcfe2 60%, #616290 130%)",
     text: "#000000",
-    patternA: "black",
-    patternB: "purple",
+    patternTone: "purple",
     cardBg: "#000000",
     cardText: "#ffffff",
     cardOffsetBg: "var(--latam-purple)",
-    accentRed: "var(--latam-red)",
-    outlineStroke: "rgba(0,0,0,0.75)",
-    cityRule: "rgba(0,0,0,0.25)",
+    outlineStroke: "rgba(0,0,0,0.7)",
+    cityRule: "rgba(0,0,0,0.22)",
     flowerA: "black",
     flowerB: "purple",
     flowerC: "red",
   },
 };
 
-// Different corner pattern layouts so variants don't all look identical.
+// ──────────────────────── corner layouts (DS) ────────────────────────
 type Layout = {
-  topLeft: PatternName;
-  topMid: PatternName;
-  topRight: PatternName;
-  bottomLeft: PatternName;
-  bottomRight: PatternName;
+  topLeft: { name: DsPatternName; w: number; h: number; scale: number };
+  topMid: { name: DsPatternName; w: number; h: number; scale: number };
+  topRight: { name: DsPatternName; w: number; h: number; scale: number };
+  bottomLeft: { name: DsPatternName; w: number; h: number; scale: number };
+  bottomRight: { name: DsPatternName; w: number; h: number; scale: number };
 };
-type PatternName =
-  | "zigzag"
-  | "scallop"
-  | "leaf-row"
-  | "single-leaf"
-  | "sun"
-  | "dots"
-  | "stripes"
-  | "grid";
 
 const LAYOUTS: Layout[] = [
-  // A — original
+  // 0 — Editorial: prehispanic strip, lines tile, leafs column
   {
-    topLeft: "dots",
-    topMid: "zigzag",
-    topRight: "leaf-row",
-    bottomLeft: "scallop",
-    bottomRight: "sun",
+    topLeft: { name: "lines", w: 380, h: 300, scale: 2.4 },
+    topMid: { name: "prehispanic", w: 540, h: 90, scale: 1.6 },
+    topRight: { name: "leafs", w: 220, h: 360, scale: 1.4 },
+    bottomLeft: { name: "natura", w: 460, h: 150, scale: 1.3 },
+    bottomRight: { name: "lines", w: 420, h: 320, scale: 2.4 },
   },
-  // B — busier top, leaf bottom
+  // 1 — Botanical: leafs + natura prominent
   {
-    topLeft: "zigzag",
-    topMid: "sun",
-    topRight: "dots",
-    bottomLeft: "leaf-row",
-    bottomRight: "scallop",
+    topLeft: { name: "leafs", w: 220, h: 360, scale: 1.4 },
+    topMid: { name: "zigzag", w: 200, h: 240, scale: 2 },
+    topRight: { name: "natura", w: 460, h: 150, scale: 1.3 },
+    bottomLeft: { name: "prehispanic", w: 460, h: 90, scale: 1.6 },
+    bottomRight: { name: "leafs", w: 220, h: 360, scale: 1.4 },
   },
-  // C — diagonal weight
+  // 2 — Geometric: prehispanic + lines tile
   {
-    topLeft: "sun",
-    topMid: "leaf-row",
-    topRight: "scallop",
-    bottomLeft: "dots",
-    bottomRight: "zigzag",
+    topLeft: { name: "prehispanic", w: 540, h: 90, scale: 1.6 },
+    topMid: { name: "lines", w: 320, h: 320, scale: 2.4 },
+    topRight: { name: "sun", w: 240, h: 240, scale: 1.4 },
+    bottomLeft: { name: "lines", w: 360, h: 300, scale: 2.4 },
+    bottomRight: { name: "prehispanic", w: 540, h: 90, scale: 1.6 },
   },
-  // D — calm grid
+  // 3 — Quiet: subtle line tiles + sparkles
   {
-    topLeft: "grid",
-    topMid: "dots",
-    topRight: "stripes",
-    bottomLeft: "leaf-row",
-    bottomRight: "scallop",
+    topLeft: { name: "lines", w: 380, h: 300, scale: 2.4 },
+    topMid: { name: "sparkle", w: 320, h: 200, scale: 1.6 },
+    topRight: { name: "lines", w: 260, h: 260, scale: 2.4 },
+    bottomLeft: { name: "natura", w: 460, h: 150, scale: 1.3 },
+    bottomRight: { name: "curves", w: 380, h: 220, scale: 2 },
   },
 ];
 
@@ -189,12 +175,13 @@ const DEFAULT_CITIES: Array<[string, string]> = [
 export function PosterFrame({
   children,
   tone = "loud",
-  variant = "red",
+  variant = "cream",
   layoutSeed = 0,
   hashtag = "#XDLATAM",
   edgeWords = DEFAULT_WORDS,
   cities = DEFAULT_CITIES,
-  showXMark = true,
+  pageNumber,
+  showXMark = false,
 }: {
   children: ReactNode;
   tone?: Tone;
@@ -203,12 +190,14 @@ export function PosterFrame({
   hashtag?: string;
   edgeWords?: string[];
   cities?: Array<[string, string]>;
+  /** Two-digit page number rendered bottom-center per the guide. */
+  pageNumber?: number | string;
   showXMark?: boolean;
 }) {
   const v = VARIANTS[variant];
   const layout = LAYOUTS[layoutSeed % LAYOUTS.length];
   const quiet = tone === "quiet";
-  const op = quiet ? 0.45 : 1;
+  const op = quiet ? 0.5 : 0.85;
   const [w1, w2, w3, w4] = [
     edgeWords[0] ?? "",
     edgeWords[1] ?? "",
@@ -223,37 +212,71 @@ export function PosterFrame({
         style={{ color: v.text }}
       >
         {/* CORNER PATTERNS */}
-        <div style={{ opacity: op }}>
-          <PatternFill
-            pattern={layout.topLeft}
-            colors={[v.patternA, v.patternB]}
-            className="absolute left-0 top-0 h-[340px] w-[440px]"
-          />
-          <PatternFill
-            pattern={layout.topMid}
-            colors={[v.patternA, v.patternB]}
-            scale={1.6}
-            className="absolute left-[380px] top-[40px] h-[220px] w-[420px]"
-          />
-          <PatternFill
-            pattern={layout.topRight}
-            colors={[v.patternA, v.patternB]}
-            scale={1.3}
-            className="absolute right-[80px] top-[120px] h-[260px] w-[260px]"
-          />
-          <PatternFill
-            pattern={layout.bottomLeft}
-            colors={[v.patternA, v.patternB]}
-            scale={1.4}
-            className="absolute left-[60px] bottom-[80px] h-[180px] w-[360px]"
-          />
-          <PatternFill
-            pattern={layout.bottomRight}
-            colors={[v.patternA, v.patternB]}
-            scale={1.2}
-            className="absolute right-[40px] bottom-[120px] h-[380px] w-[480px]"
-          />
-        </div>
+        <DsPattern
+          name={layout.topLeft.name}
+          tone={v.patternTone}
+          scale={layout.topLeft.scale}
+          opacity={op}
+          className="absolute"
+          style={{
+            left: 0,
+            top: 0,
+            width: layout.topLeft.w,
+            height: layout.topLeft.h,
+          }}
+        />
+        <DsPattern
+          name={layout.topMid.name}
+          tone={v.patternTone}
+          scale={layout.topMid.scale}
+          opacity={op}
+          className="absolute"
+          style={{
+            left: 400,
+            top: 30,
+            width: layout.topMid.w,
+            height: layout.topMid.h,
+          }}
+        />
+        <DsPattern
+          name={layout.topRight.name}
+          tone={v.patternTone}
+          scale={layout.topRight.scale}
+          opacity={op}
+          className="absolute"
+          style={{
+            right: 60,
+            top: 120,
+            width: layout.topRight.w,
+            height: layout.topRight.h,
+          }}
+        />
+        <DsPattern
+          name={layout.bottomLeft.name}
+          tone={v.patternTone}
+          scale={layout.bottomLeft.scale}
+          opacity={op}
+          className="absolute"
+          style={{
+            left: 60,
+            bottom: 80,
+            width: layout.bottomLeft.w,
+            height: layout.bottomLeft.h,
+          }}
+        />
+        <DsPattern
+          name={layout.bottomRight.name}
+          tone={v.patternTone}
+          scale={layout.bottomRight.scale}
+          opacity={op}
+          className="absolute"
+          style={{
+            right: 40,
+            bottom: 120,
+            width: layout.bottomRight.w,
+            height: layout.bottomRight.h,
+          }}
+        />
 
         {/* OUTLINE EDGE WORDS */}
         {!quiet && (
@@ -319,30 +342,39 @@ export function PosterFrame({
         {/* CENTRAL CONTENT */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
           <div className="pointer-events-auto">
-            <CardContext.Provider value={{ bg: v.cardBg, fg: v.cardText, offset: v.cardOffsetBg, accent: v.accentRed }}>
+            <CardContext.Provider
+              value={{
+                bg: v.cardBg,
+                fg: v.cardText,
+                offset: v.cardOffsetBg,
+                accent: "var(--latam-red)",
+              }}
+            >
               {children}
             </CardContext.Provider>
           </div>
         </div>
+
+        {/* PAGE NUMBER (bottom-center, per guide) */}
+        {pageNumber !== undefined && (
+          <div
+            className="absolute bottom-3 left-1/2 -translate-x-1/2 text-[14px] tracking-[0.18em] tabular-nums"
+            style={{ color: v.text, opacity: 0.55 }}
+          >
+            {typeof pageNumber === "number"
+              ? String(pageNumber).padStart(2, "0")
+              : pageNumber}
+          </div>
+        )}
 
         {/* CITIES FOOTER */}
         <div className="absolute bottom-0 left-0 right-0">
           <div className="mx-24 mb-8 flex items-end justify-between text-[22px]">
             {cities.map(([place, phrase]) => (
               <div key={place} className="flex items-baseline gap-3">
-                <span
-                  style={{ fontFamily: "var(--font-hand)" }}
-                  className="italic"
-                >
-                  {place}
-                </span>
+                <span className="italic font-semibold">{place}</span>
                 <span style={{ opacity: 0.6 }}>·</span>
-                <span
-                  style={{ fontFamily: "var(--font-hand)" }}
-                  className="italic"
-                >
-                  {phrase}
-                </span>
+                <span className="italic">{phrase}</span>
               </div>
             ))}
           </div>
@@ -398,10 +430,6 @@ export function useCardStyle() {
   return useContext(CardContext);
 }
 
-/**
- * Black title card used as the central focus for poster slides. Pulls colors
- * from the surrounding PosterFrame variant via context.
- */
 export function TitleCard({
   children,
   minWidth = 920,

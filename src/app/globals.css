@@ -20,7 +20,9 @@
   --color-latam-muted: var(--latam-muted);
   --font-sans: var(--font-lexend);
   --font-display: var(--font-lexend);
-  --font-hand: var(--font-kalam);
+  /* The DS uses Lexend italic for the "supportive / handwritten" tone.
+   * (Kalam used to be here but isn't in the guide.) */
+  --font-hand: var(--font-lexend);
 }
 
 html,

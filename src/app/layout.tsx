@@ -1,18 +1,11 @@
 import type { Metadata } from "next";
-import { Lexend, Kalam } from "next/font/google";
+import { Lexend } from "next/font/google";
 import "./globals.css";
 
 const lexend = Lexend({
   variable: "--font-lexend",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
-  display: "swap",
-});
-
-const kalam = Kalam({
-  variable: "--font-kalam",
-  subsets: ["latin"],
-  weight: ["400", "700"],
   display: "swap",
 });
 
@@ -29,7 +22,7 @@ export default function RootLayout({
   return (
     <html
       lang="es"
-      className={`${lexend.variable} ${kalam.variable} h-full antialiased`}
+      className={`${lexend.variable} h-full antialiased`}
     >
       <body className="min-h-full bg-[var(--latam-offwhite)] text-[var(--latam-black)]">
         {children}
