@@ -157,7 +157,7 @@ const raw: RawSlide[] = [
     build: () => (
       <ContentSlide
         variant="cream"
-        patternName="lines"
+        patternName="prehispanic"
         bgImage="/bg/Textura.png"
         sectionLabel="Updates · 01"
         title="¿Qué estamos haciendo?"
