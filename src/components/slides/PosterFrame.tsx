@@ -243,26 +243,11 @@ export function PosterFrame({
   const op = quiet ? 0.55 : 0.9;
 
   return (
-    <SlideStage background={v.background}>
+    <SlideStage background={v.background} backgroundImage={bgImage}>
       <div
         className="relative h-full w-full overflow-hidden"
         style={{ color: v.text }}
       >
-        {/* FULL-BLEED BG IMAGE (if provided) — div+backgroundImage so cover
-            sizing behaves identically across browsers (no flex/intrinsic-size
-            gotchas like with <img>). */}
-        {bgImage ? (
-          <div
-            aria-hidden
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              backgroundImage: `url("${bgImage}")`,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-              backgroundRepeat: "no-repeat",
-            }}
-          />
-        ) : null}
 
         {/* CUSTOM DECORATION (skips the default pattern overlay) */}
         {decoration ? (
