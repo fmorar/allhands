@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { writeFile, mkdir } from "node:fs/promises";
 import path from "node:path";
 import { randomUUID } from "node:crypto";
+import { put } from "@vercel/blob";
 import { addSubmission, getIcebreaker } from "@/lib/icebreakerStore";
 
 export const dynamic = "force-dynamic";
@@ -9,6 +10,8 @@ export const runtime = "nodejs";
 
 const MAX_BYTES = 8 * 1024 * 1024; // 8 MB
 const ALLOWED = new Set(["image/jpeg", "image/png", "image/webp", "image/gif"]);
+
+const hasBlob = !!process.env.BLOB_READ_WRITE_TOKEN;
 
 export async function POST(req: Request) {
   const state = await getIcebreaker();
@@ -41,17 +44,27 @@ export async function POST(req: Request) {
 
   const id = randomUUID();
   const ext = file.type.split("/")[1] === "jpeg" ? "jpg" : file.type.split("/")[1];
-  const filename = `${Date.now()}-${id}.${ext}`;
+  const filename = `icebreaker/${Date.now()}-${id}.${ext}`;
 
-  // For local dev + single-instance Vercel, /public/uploads works. For
-  // multi-instance Vercel deploys, swap to Vercel Blob (@vercel/blob) and
-  // upload there instead — the URL field stays the same shape.
-  const uploadsDir = path.join(process.cwd(), "public", "uploads");
-  await mkdir(uploadsDir, { recursive: true });
-  const buffer = Buffer.from(await file.arrayBuffer());
-  await writeFile(path.join(uploadsDir, filename), buffer);
+  let url: string;
+  if (hasBlob) {
+    // Production / Vercel — public Blob URL.
+    const blob = await put(filename, file, {
+      access: "public",
+      contentType: file.type,
+      addRandomSuffix: false,
+    });
+    url = blob.url;
+  } else {
+    // Local dev — write to /public/uploads/.
+    const uploadsDir = path.join(process.cwd(), "public", "uploads");
+    await mkdir(uploadsDir, { recursive: true });
+    const localName = filename.replace(/^icebreaker\//, "");
+    const buffer = Buffer.from(await file.arrayBuffer());
+    await writeFile(path.join(uploadsDir, localName), buffer);
+    url = `/uploads/${localName}`;
+  }
 
-  const url = `/uploads/${filename}`;
   const next = await addSubmission({ id, url, name, ts: Date.now() });
   return NextResponse.json(next);
 }
