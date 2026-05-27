@@ -123,81 +123,55 @@ type Placement = { left?: number; right?: number; top?: number; bottom?: number;
 
 type Profile = { kind: "strip" | "column" | "tile"; placements: Placement[] };
 
-const STRIP_H = 110;
-const COLUMN_W = 220;
-const TILE_SIZE = 360;
+const STRIP_H = 120;
+const COLUMN_W = 200;
 
 const PROFILES: Record<DsPatternName, Profile> = {
-  // "Strip" patterns sit as a single horizontal band at the top so they
-  // read as a header decoration instead of "framing brackets".
+  /* "Strip" patterns — full-bleed horizontal band at the top edge.
+     The band touches the very top so it reads as a structural header. */
   prehispanic: {
     kind: "strip",
-    placements: [
-      { left: 0, right: 0, top: 40, w: 0, h: STRIP_H },
-    ],
+    placements: [{ left: 0, right: 0, top: 0, w: 0, h: STRIP_H }],
   },
   natura: {
     kind: "strip",
-    placements: [
-      { left: 0, right: 0, top: 40, w: 0, h: STRIP_H },
-    ],
+    placements: [{ left: 0, right: 0, top: 0, w: 0, h: STRIP_H }],
   },
-  // "Column" patterns: placed asymmetrically (one side) so they feel like
-  // intentional accents, not framing brackets.
+  /* "Column" patterns — full-bleed vertical strip on ONE side, top to
+     bottom, no margins. Reads as a sidebar / hero column. */
   zigzag: {
     kind: "column",
-    placements: [
-      { left: 24, top: 60, bottom: 200, w: COLUMN_W, h: 0 },
-    ],
+    placements: [{ left: 0, top: 0, bottom: 0, w: COLUMN_W, h: 0 }],
   },
   "zigzag-simple": {
     kind: "column",
-    placements: [
-      { right: 36, top: 60, bottom: 200, w: 160, h: 0 },
-    ],
+    placements: [{ right: 0, top: 0, bottom: 0, w: 140, h: 0 }],
   },
   curves: {
     kind: "column",
-    placements: [
-      { left: 24, top: 100, bottom: 220, w: COLUMN_W, h: 0 },
-    ],
+    placements: [{ left: 0, top: 0, bottom: 0, w: COLUMN_W, h: 0 }],
   },
   leafs: {
     kind: "column",
-    placements: [
-      { left: 24, top: 60, bottom: 200, w: COLUMN_W, h: 0 },
-      { right: 30, top: 280, w: 160, h: 240 },
-    ],
+    placements: [{ left: 0, top: 0, bottom: 0, w: COLUMN_W, h: 0 }],
   },
+  /* "Tile" patterns — anchored single mark at a corner; sized smaller
+     so they feel like a label badge, not a decoration. */
   lines: {
     kind: "tile",
-    placements: [
-      { left: 30, top: 50, w: TILE_SIZE, h: TILE_SIZE },
-      { right: 30, bottom: 110, w: TILE_SIZE, h: TILE_SIZE },
-    ],
+    placements: [{ left: 0, top: 0, w: 360, h: 360 }],
   },
   flower: {
     kind: "tile",
-    placements: [
-      { left: 40, top: 60, w: 300, h: 300 },
-      { right: 40, bottom: 130, w: 300, h: 300 },
-    ],
+    placements: [{ right: 60, top: 60, w: 220, h: 220 }],
   },
   sun: {
     kind: "tile",
-    placements: [
-      { left: 60, top: 80, w: 240, h: 240 },
-      { right: 60, bottom: 130, w: 240, h: 240 },
-      { left: 1500, top: 100, w: 160, h: 160 },
-    ],
+    placements: [{ right: 60, top: 60, w: 220, h: 220 }],
   },
   sparkle: {
     kind: "tile",
-    placements: [
-      { left: 80, top: 100, w: 200, h: 200 },
-      { right: 80, bottom: 160, w: 200, h: 200 },
-      { left: 400, bottom: 200, w: 140, h: 140 },
-    ],
+    placements: [{ right: 60, top: 60, w: 220, h: 220 }],
   },
 };
 

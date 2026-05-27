@@ -14,33 +14,24 @@ import { ProjectEmbedSlide } from "@/components/slides/ProjectEmbedSlide";
 import { FigmaConfigSlide } from "@/components/slides/FigmaConfigSlide";
 import { DsPattern } from "@/components/library/dsPatterns";
 
-/* Custom decoration for the cover — ONE main strip pattern + two small
- * decorative accents. Keeps the brand vocabulary without feeling busy. */
+/* Custom decoration for the cover — full-bleed prehispanic header band
+ * + a sun mark anchored to the top-right corner. Both touch slide edges
+ * so they read as architectural, not floating. */
 const COVER_MIX = (
   <>
-    {/* Hero strip — prehispanic across the top */}
     <DsPattern
       name="prehispanic"
       tone="red"
       opacity={0.9}
       className="absolute"
-      style={{ left: 0, right: 0, top: 40, height: 110 }}
+      style={{ left: 0, right: 0, top: 0, height: 120 }}
     />
-    {/* Accent 1 — sun mark, top-right */}
     <DsPattern
       name="sun"
       tone="red"
-      opacity={0.85}
+      opacity={0.9}
       className="absolute"
-      style={{ right: 80, top: 200, width: 180, height: 180 }}
-    />
-    {/* Accent 2 — flower mark, bottom-right */}
-    <DsPattern
-      name="flower"
-      tone="purple"
-      opacity={0.7}
-      className="absolute"
-      style={{ right: 80, bottom: 260, width: 180, height: 180 }}
+      style={{ right: 0, bottom: 0, width: 240, height: 240 }}
     />
   </>
 );
