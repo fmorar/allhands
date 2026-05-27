@@ -1,5 +1,6 @@
 import { QRCodeSVG } from "qrcode.react";
 import { PosterFrame, TitleCard, type PosterVariant } from "./PosterFrame";
+import type { DsPatternName } from "../library/dsPatterns";
 
 /**
  * Reminder slide for Figma Config — call-to-action card with the event year,
@@ -11,20 +12,26 @@ export function FigmaConfigSlide({
   pitch = "Inspiración fresca para todo el equipo. Apártalo en tu calendario.",
   url = "https://config.figma.com",
   variant = "cream",
-  layoutSeed = 1,
+  patternName = "flower",
+  bgImage,
+  showPattern = true,
 }: {
   year?: string;
   dates?: string;
   pitch?: string;
   url?: string;
   variant?: PosterVariant;
-  layoutSeed?: number;
+  patternName?: DsPatternName;
+  bgImage?: string;
+  showPattern?: boolean;
 }) {
   return (
     <PosterFrame
       tone="quiet"
       variant={variant}
-      layoutSeed={layoutSeed}
+      patternName={patternName}
+      bgImage={bgImage}
+      showPattern={showPattern}
       showXMark={false}
     >
       <TitleCard minWidth={1500} maxWidth={1700} padding={56}>
@@ -33,7 +40,7 @@ export function FigmaConfigSlide({
           <div className="flex-1">
             <div className="flex items-center gap-4 text-[20px] font-semibold tracking-[0.22em] text-[var(--latam-red)]">
               <span className="inline-block h-[3px] w-12 bg-[var(--latam-red)]" />
-              SAVE THE DATE
+              RESERVA LA FECHA
             </div>
 
             <div className="mt-3 text-[20px] uppercase tracking-[0.18em] text-white/55">
@@ -68,7 +75,7 @@ export function FigmaConfigSlide({
             </div>
             <div className="text-center">
               <div className="text-[11px] uppercase tracking-[0.18em] text-white/70">
-                Escanea para info
+                Escanéalo para más info
               </div>
               <div className="mt-1 break-all text-[12px] font-mono text-white/65">
                 {url.replace(/^https?:\/\//, "")}

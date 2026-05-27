@@ -1,4 +1,5 @@
 import { PosterFrame, TitleCard, type PosterVariant } from "./PosterFrame";
+import type { DsPatternName } from "../library/dsPatterns";
 
 export type IndexEntry = { label: string; page: string };
 export type IndexSection = { title: string; entries: IndexEntry[] };
@@ -8,20 +9,24 @@ export function IndexSlide({
   intro,
   sections,
   variant = "cream",
-  layoutSeed = 3,
+  patternName = "leafs",
+  bgImage,
+  showPattern = true,
 }: {
   pageNumber?: number | string;
   intro: string;
   sections: IndexSection[];
   variant?: PosterVariant;
-  layoutSeed?: number;
+  patternName?: DsPatternName;
+  bgImage?: string;
+  showPattern?: boolean;
 }) {
   const half = Math.ceil(sections.length / 2);
   const left = sections.slice(0, half);
   const right = sections.slice(half);
 
   return (
-    <PosterFrame tone="quiet" variant={variant} layoutSeed={layoutSeed}>
+    <PosterFrame tone="quiet" variant={variant} patternName={patternName} bgImage={bgImage} showPattern={showPattern}>
       <TitleCard minWidth={1400} maxWidth={1600} padding={72}>
         <div className="flex flex-col gap-6">
           <div className="flex items-center gap-4 text-[22px] font-semibold tracking-[0.18em] text-[var(--latam-red)]">

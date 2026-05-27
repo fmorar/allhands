@@ -5,6 +5,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { QRCodeSVG } from "qrcode.react";
 import { PosterFrame, TitleCard, type PosterVariant } from "./PosterFrame";
+import type { DsPatternName } from "../library/dsPatterns";
 
 type Status = "idle" | "revealing" | "uploading" | "comparing";
 type Submission = { id: string; url: string; name?: string; ts: number };
@@ -19,12 +20,14 @@ type State = {
 const POLL_MS = 1200;
 
 export function IcebreakerSlide({
-  variant = "red",
-  layoutSeed = 2,
+  variant = "cream",
+  patternName = "sun",
+  bgImage,
   referenceSrc = "/icebreaker/reference.png",
 }: {
   variant?: PosterVariant;
-  layoutSeed?: number;
+  patternName?: DsPatternName;
+  bgImage?: string;
   referenceSrc?: string;
 }) {
   const [state, setState] = useState<State | null>(null);
@@ -96,7 +99,8 @@ export function IcebreakerSlide({
       <PosterFrame
         tone="quiet"
         variant={variant}
-        layoutSeed={layoutSeed}
+        patternName={patternName}
+        bgImage={bgImage}
         showXMark={false}
       >
         {status === "idle" && <IdleState onStart={start} voteUrl={voteUrl} />}

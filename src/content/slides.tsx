@@ -12,6 +12,49 @@ import { AICaravanResultsSlide } from "@/components/slides/AICaravanResultsSlide
 import { PresenterIntroSlide } from "@/components/slides/PresenterIntroSlide";
 import { ProjectEmbedSlide } from "@/components/slides/ProjectEmbedSlide";
 import { FigmaConfigSlide } from "@/components/slides/FigmaConfigSlide";
+import { DsPattern } from "@/components/library/dsPatterns";
+
+/* Custom decoration for the cover — mix of patterns layered around the
+ * black title card. Other slides use a single decorative pattern. */
+const COVER_MIX = (
+  <>
+    <DsPattern
+      name="prehispanic"
+      tone="red"
+      opacity={0.9}
+      className="absolute"
+      style={{ left: 0, right: 0, top: 24, height: 90 }}
+    />
+    <DsPattern
+      name="leafs"
+      tone="multi"
+      opacity={0.9}
+      className="absolute"
+      style={{ left: 30, top: 200, bottom: 250, width: 200 }}
+    />
+    <DsPattern
+      name="sun"
+      tone="red"
+      opacity={0.9}
+      className="absolute"
+      style={{ right: 60, top: 200, width: 200, height: 200 }}
+    />
+    <DsPattern
+      name="natura"
+      tone="red"
+      opacity={0.9}
+      className="absolute"
+      style={{ left: 0, right: 0, bottom: 110, height: 90 }}
+    />
+    <DsPattern
+      name="flower"
+      tone="purple"
+      opacity={0.7}
+      className="absolute"
+      style={{ right: 80, bottom: 260, width: 220, height: 220 }}
+    />
+  </>
+);
 
 /**
  * Variant rotation gives the deck rhythm without breaking the shared
@@ -25,7 +68,12 @@ const raw: RawSlide[] = [
   {
     id: "cover",
     build: () => (
-      <CoverSlide title="Bienvenida" variant="cream" layoutSeed={0} />
+      <CoverSlide
+        title="Bienvenida"
+        variant="cream"
+        bgImage="/bg/Textura.png"
+        decoration={COVER_MIX}
+      />
     ),
   },
   {
@@ -33,7 +81,8 @@ const raw: RawSlide[] = [
     build: () => (
       <MoodSlide
         variant="cream"
-        layoutSeed={1}
+        patternName="natura"
+        bgImage="/bg/Textura-1.png"
         question="¿Cómo te sientes hoy?"
       />
     ),
@@ -43,20 +92,21 @@ const raw: RawSlide[] = [
     build: () => (
       <IndexSlide
         variant="cream"
-        layoutSeed={3}
+        patternName="leafs"
+        bgImage="/bg/Textura.png"
         intro="Lo que vamos a cubrir hoy."
         sections={[
           {
             title: "Agenda",
             entries: [
-              { label: "Welcome", page: "01" },
-              { label: "Icebreaker · check-in", page: "02" },
-              { label: "Icebreaker · activity", page: "05" },
-              { label: "Team Updates", page: "06" },
+              { label: "Bienvenida", page: "01" },
+              { label: "Rompehielo · check-in", page: "02" },
+              { label: "Rompehielo · actividad", page: "05" },
+              { label: "Updates del equipo", page: "06" },
             ],
           },
           {
-            title: "Demos & Cierre",
+            title: "Demos y cierre",
             entries: [
               { label: "AI Caravan · Resultados", page: "11" },
               { label: "Alejandra · NOIRE", page: "12" },
@@ -73,7 +123,9 @@ const raw: RawSlide[] = [
     build: () => (
       <SectionDividerSlide
         variant="black"
-        layoutSeed={1}
+        patternName="curves"
+        bgImage="/bg/V4.png"
+        showPattern={false}
         number="01"
         title="Introducción"
         description="De dónde venimos y qué queremos lograr hoy."
@@ -83,7 +135,7 @@ const raw: RawSlide[] = [
   {
     id: "icebreaker",
     build: () => (
-      <IcebreakerSlide variant="cream" layoutSeed={2} />
+      <IcebreakerSlide variant="cream" patternName="sun" bgImage="/bg/Textura.png" />
     ),
   },
   {
@@ -91,10 +143,12 @@ const raw: RawSlide[] = [
     build: () => (
       <SectionDividerSlide
         variant="black"
-        layoutSeed={1}
+        patternName="sparkle"
+        bgImage="/bg/V5.png"
+        showPattern={false}
         number="01"
-        title="Team Updates"
-        description="Talent visibility, allocation & growth — where we are and how you fit in."
+        title="Updates del equipo"
+        description="Visibilidad, asignación y crecimiento del talento — dónde estamos y cómo encajas tú."
       />
     ),
   },
@@ -103,21 +157,22 @@ const raw: RawSlide[] = [
     build: () => (
       <ContentSlide
         variant="cream"
-        layoutSeed={0}
-        sectionLabel="Team Updates · 01"
-        title="What are we doing?"
+        patternName="lines"
+        bgImage="/bg/Textura.png"
+        sectionLabel="Updates · 01"
+        title="¿Qué estamos haciendo?"
       >
         <p className="text-[24px] text-white/85 max-w-[1100px]">
-          Driving better talent visibility, allocation & growth across
-          Experience.
+          Mejor visibilidad, asignación y crecimiento del talento dentro
+          de Experience.
         </p>
         <ul className="mt-6 space-y-3 text-[22px] list-disc pl-6 max-w-[1100px]">
-          <li>Aligning skills, profiles, and demand needs with global standards.</li>
-          <li>Strengthening upskilling pathways tied to real project opportunities.</li>
-          <li>Increasing transparency in staffing & bench management.</li>
+          <li>Alinear skills, perfiles y demanda con los estándares globales.</li>
+          <li>Reforzar las rutas de upskilling conectadas a oportunidades reales de proyecto.</li>
+          <li>Más transparencia en staffing y manejo del bench.</li>
         </ul>
-        <Callout label="Outcome">
-          Better matchmaking between people, skills, and opportunities.
+        <Callout label="Resultado">
+          Mejor match entre personas, skills y oportunidades.
         </Callout>
       </ContentSlide>
     ),
@@ -127,31 +182,33 @@ const raw: RawSlide[] = [
     build: () => (
       <ContentSlide
         variant="cream"
-        layoutSeed={3}
-        sectionLabel="Team Updates · 02"
-        title="How can you help?"
+        patternName="flower"
+        bgImage="/bg/Sloths.png"
+        showPattern={false}
+        sectionLabel="Updates · 02"
+        title="¿Cómo puedes ayudar?"
       >
         <p className="text-[22px] text-white/85 max-w-[1100px]">
-          Your participation is key to making this work.
+          Tu participación es clave para que esto funcione.
         </p>
         <div className="mt-5 grid grid-cols-2 gap-6">
-          <RoleBlock title="Individual Contributors">
-            <li>Help your People Manager understand your project.</li>
-            <li>Key stakeholders (name, role, contact).</li>
-            <li>Project structure & dynamics.</li>
-            <li>Discuss opportunities identified within your project with your PM.</li>
-            <li>If you have a fully developed secondary skillset, create a separate profile.</li>
+          <RoleBlock title="Colaboradores individuales">
+            <li>Ayuda a tu People Manager a entender tu proyecto.</li>
+            <li>Stakeholders clave (nombre, rol, contacto).</li>
+            <li>Estructura y dinámica del proyecto.</li>
+            <li>Conversa con tu PM las oportunidades que identifiques dentro del proyecto.</li>
+            <li>Si tienes un skillset secundario desarrollado, crea un perfil aparte.</li>
             <li className="opacity-70">
-              <em>(Coming soon)</em> Keep your Enrich+ profile updated and accurate.
+              <em>(Próximamente)</em> Mantén tu perfil de Enrich+ actualizado y preciso.
             </li>
           </RoleBlock>
           <RoleBlock title="People Managers">
-            <li>Provide clear, actionable feedback on team members.</li>
-            <li>Identify skill gaps and growth opportunities.</li>
+            <li>Da feedback claro y accionable a los miembros del equipo.</li>
+            <li>Identifica gaps de skills y oportunidades de crecimiento.</li>
           </RoleBlock>
         </div>
-        <Callout label="Impact">
-          Stronger decisions, faster staffing, and better project outcomes.
+        <Callout label="Impacto">
+          Mejores decisiones, staffing más rápido y mejores resultados de proyecto.
         </Callout>
       </ContentSlide>
     ),
@@ -161,21 +218,23 @@ const raw: RawSlide[] = [
     build: () => (
       <ContentSlide
         variant="purple"
-        layoutSeed={2}
-        sectionLabel="Team Updates · 03"
-        title="What do we need immediately?"
+        patternName="zigzag"
+        bgImage="/bg/Flowers.png"
+        showPattern={false}
+        sectionLabel="Updates · 03"
+        title="¿Qué necesitamos ya?"
       >
         <p className="text-[22px] text-white/85 max-w-[1100px]">
-          Short-term priorities.
+          Prioridades a corto plazo.
         </p>
         <ul className="mt-6 space-y-3 text-[22px] list-disc pl-6 max-w-[1100px]">
-          <li>Updated profiles + accurate skill tagging for all team members.</li>
-          <li>Clear visibility on bench resources and readiness status.</li>
-          <li>Identification of critical skill gaps across the project pipeline.</li>
-          <li>Alignment from Leads on priority roles & upcoming demand.</li>
+          <li>Perfiles actualizados con skill tagging preciso para todo el equipo.</li>
+          <li>Visibilidad clara del bench y de su estado de disponibilidad.</li>
+          <li>Identificación de gaps críticos de skills en el pipeline de proyectos.</li>
+          <li>Alineación con los Leads sobre roles prioritarios y demanda próxima.</li>
         </ul>
-        <Callout label="Focus · next few weeks">
-          Enable faster, more accurate staffing decisions.
+        <Callout label="Foco · próximas semanas">
+          Tomar decisiones de staffing más rápidas y precisas.
         </Callout>
       </ContentSlide>
     ),
@@ -185,7 +244,9 @@ const raw: RawSlide[] = [
     build: () => (
       <QuoteSlide
         variant="gradient-warm"
-        layoutSeed={2}
+        patternName="zigzag-simple"
+        bgImage="/bg/V2.png"
+        showPattern={false}
         quote="No somos valiosos por las herramientas que usamos, somos valiosos por cómo pensamos, cómo aprendemos y cómo convertimos esas herramientas en impacto."
         attribution="Fabs"
       />
@@ -193,7 +254,14 @@ const raw: RawSlide[] = [
   },
   {
     id: "ai-caravan-results",
-    build: () => <AICaravanResultsSlide variant="purple" layoutSeed={3} />,
+    build: () => (
+      <AICaravanResultsSlide
+        variant="purple"
+        patternName="lines"
+        bgImage="/bg/Oxcart.png"
+        showPattern={false}
+      />
+    ),
   },
   {
     id: "alejandra-showcase",
@@ -205,7 +273,9 @@ const raw: RawSlide[] = [
         label="Showcase"
         photoSrc="/presenters/alejandra.jpg"
         variant="gradient-cool"
-        layoutSeed={0}
+        patternName="curves"
+        bgImage="/bg/V3.png"
+        showPattern={false}
       />
     ),
   },
@@ -227,7 +297,9 @@ const raw: RawSlide[] = [
         pitch="La conferencia anual de Figma — inspiración fresca para todo el equipo. Apártalo en tu calendario y nos vemos ahí."
         url="https://config.figma.com"
         variant="cream"
-        layoutSeed={1}
+        patternName="flower"
+        bgImage="/bg/Tucans.png"
+        showPattern={false}
       />
     ),
   },
@@ -236,7 +308,9 @@ const raw: RawSlide[] = [
     build: () => (
       <ClosingSlide
         variant="black"
-        layoutSeed={0}
+        patternName="sun"
+        bgImage="/bg/V1.png"
+        showPattern={false}
         title="Gracias"
         subtitle="Preguntas, ideas, abrazos — todo bienvenido."
       />

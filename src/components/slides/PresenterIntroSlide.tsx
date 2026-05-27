@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import { PosterFrame, TitleCard, type PosterVariant } from "./PosterFrame";
+import type { DsPatternName } from "../library/dsPatterns";
 
 /**
  * "Now presenting" intro slide. Big name in a black card with an avatar on
@@ -13,7 +14,9 @@ export function PresenterIntroSlide({
   label = "Showcase",
   photoSrc,
   variant = "gradient-cool",
-  layoutSeed = 0,
+  patternName = "curves",
+  bgImage,
+  showPattern = true,
 }: {
   name: string;
   topic: string;
@@ -21,7 +24,9 @@ export function PresenterIntroSlide({
   label?: string;
   photoSrc?: string;
   variant?: PosterVariant;
-  layoutSeed?: number;
+  patternName?: DsPatternName;
+  bgImage?: string;
+  showPattern?: boolean;
 }) {
   const initial = (name.trim()[0] ?? "?").toUpperCase();
 
@@ -29,7 +34,9 @@ export function PresenterIntroSlide({
     <PosterFrame
       tone="quiet"
       variant={variant}
-      layoutSeed={layoutSeed}
+      patternName={patternName}
+      bgImage={bgImage}
+      showPattern={showPattern}
       showXMark={false}
     >
       <TitleCard minWidth={1500} maxWidth={1700} padding={56}>

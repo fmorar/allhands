@@ -1,13 +1,16 @@
 import type { ReactNode } from "react";
 import { PosterFrame, TitleCard, type PosterVariant } from "./PosterFrame";
+import type { DsPatternName } from "../library/dsPatterns";
 
 export function ContentSlide({
   sectionLabel,
   title,
   pageNumber: _pageNumber,
   children,
-  variant = "red",
-  layoutSeed = 0,
+  variant = "cream",
+  patternName = "prehispanic",
+  bgImage,
+  showPattern = true,
 }: {
   section?: string;
   slideLabel?: string;
@@ -17,10 +20,12 @@ export function ContentSlide({
   pageNumber?: number | string;
   children?: ReactNode;
   variant?: PosterVariant;
-  layoutSeed?: number;
+  patternName?: DsPatternName;
+  bgImage?: string;
+  showPattern?: boolean;
 }) {
   return (
-    <PosterFrame tone="quiet" variant={variant} layoutSeed={layoutSeed}>
+    <PosterFrame tone="quiet" variant={variant} patternName={patternName} bgImage={bgImage} showPattern={showPattern}>
       <TitleCard minWidth={1300} maxWidth={1500} padding={72}>
         <div className="flex flex-col gap-6">
           {sectionLabel ? (

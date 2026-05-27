@@ -1,4 +1,5 @@
 import { PosterFrame, TitleCard, type PosterVariant } from "./PosterFrame";
+import type { DsPatternName } from "../library/dsPatterns";
 
 export function CoverSlide({
   title,
@@ -6,28 +7,31 @@ export function CoverSlide({
   badge = "XD Latam",
   year = "2026",
   hashtag = "#XDLATAM",
-  edgeWords,
   cities,
-  variant = "red",
-  layoutSeed = 0,
+  variant = "cream",
+  patternName = "prehispanic",
+  bgImage,
+  decoration,
 }: {
   title: string;
   subtitle?: string;
   badge?: string;
   year?: string;
   hashtag?: string;
-  edgeWords?: string[];
   cities?: Array<[string, string]>;
   variant?: PosterVariant;
-  layoutSeed?: number;
+  patternName?: DsPatternName;
+  bgImage?: string;
+  decoration?: React.ReactNode;
 }) {
   return (
     <PosterFrame
       tone="loud"
       variant={variant}
-      layoutSeed={layoutSeed}
+      patternName={patternName}
+      bgImage={bgImage}
+      decoration={decoration}
       hashtag={hashtag}
-      edgeWords={edgeWords}
       cities={cities}
     >
       <TitleCard minWidth={920} height={480}>

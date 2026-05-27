@@ -1,20 +1,25 @@
 import { PosterFrame, TitleCard, type PosterVariant } from "./PosterFrame";
+import type { DsPatternName } from "../library/dsPatterns";
 
 export function ClosingSlide({
   title = "Gracias",
   subtitle,
   contacts,
-  variant = "red",
-  layoutSeed = 0,
+  variant = "black",
+  patternName = "sun",
+  bgImage,
+  showPattern = true,
 }: {
   title?: string;
   subtitle?: string;
   contacts?: Array<{ label: string; value: string }>;
   variant?: PosterVariant;
-  layoutSeed?: number;
+  patternName?: DsPatternName;
+  bgImage?: string;
+  showPattern?: boolean;
 }) {
   return (
-    <PosterFrame tone="loud" variant={variant} hashtag="#XDLATAM" layoutSeed={layoutSeed}>
+    <PosterFrame tone="loud" variant={variant} hashtag="#XDLATAM" patternName={patternName} bgImage={bgImage} showPattern={showPattern}>
       <TitleCard minWidth={1000} maxWidth={1500} height={560} padding={64}>
         <div className="flex h-full flex-col items-center justify-center text-center">
           <h2

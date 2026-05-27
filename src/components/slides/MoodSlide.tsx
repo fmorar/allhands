@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { QRCodeSVG } from "qrcode.react";
 import { PosterFrame, TitleCard, type PosterVariant } from "./PosterFrame";
+import type { DsPatternName } from "../library/dsPatterns";
 import { MOODS, type MoodId } from "@/lib/moodStore";
 
 type Counts = Record<MoodId, number>;
@@ -15,13 +16,15 @@ const EMPTY: State = {
 };
 
 export function MoodSlide({
-  variant = "red",
-  layoutSeed = 2,
+  variant = "cream",
+  patternName = "natura",
+  bgImage,
   question = "¿Cómo te sientes hoy?",
   pollMs = 1500,
 }: {
   variant?: PosterVariant;
-  layoutSeed?: number;
+  patternName?: DsPatternName;
+  bgImage?: string;
   question?: string;
   pollMs?: number;
 }) {
@@ -79,7 +82,8 @@ export function MoodSlide({
     <PosterFrame
       tone="quiet"
       variant={variant}
-      layoutSeed={layoutSeed}
+      patternName={patternName}
+      bgImage={bgImage}
       showXMark={false}
     >
       <TitleCard minWidth={1500} maxWidth={1700} padding={56}>

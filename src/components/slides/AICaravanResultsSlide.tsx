@@ -2,13 +2,18 @@
 
 import { useEffect, useState } from "react";
 import { PosterFrame, TitleCard, type PosterVariant } from "./PosterFrame";
+import type { DsPatternName } from "../library/dsPatterns";
 
 export function AICaravanResultsSlide({
   variant = "purple",
-  layoutSeed = 3,
+  patternName = "lines",
+  bgImage,
+  showPattern = true,
 }: {
   variant?: PosterVariant;
-  layoutSeed?: number;
+  patternName?: DsPatternName;
+  bgImage?: string;
+  showPattern?: boolean;
 }) {
   // Re-trigger entrance animations every time the slide is navigated to by
   // bumping a `cycle` counter on mount.
@@ -28,27 +33,27 @@ export function AICaravanResultsSlide({
   };
 
   const row1: CardSpec[] = [
-    { value: "40", label: "Total Headcount", big: true },
-    { value: "93%", label: "Capability Enrollment", hint: "37 participants", tone: "red" },
-    { value: "8%", label: "Apathetic", hint: "3 collaborators" },
-    { value: "85%", label: "Attendance Rate", tone: "red" },
+    { value: "40", label: "Total de personas", big: true },
+    { value: "93%", label: "Inscripción", hint: "37 participantes", tone: "red" },
+    { value: "8%", label: "Apáticos", hint: "3 colaboradores" },
+    { value: "85%", label: "Asistencia", tone: "red" },
   ];
   const row2: CardSpec[] = [
-    { value: "39%", label: "Fully Engaged", hint: "10 participants", tone: "success" },
-    { value: "42%", label: "Partially Engaged", hint: "17 participants", tone: "warn" },
-    { value: "18%", label: "Disengaged", hint: "6 participants", tone: "danger" },
+    { value: "39%", label: "Muy comprometidos", hint: "10 participantes", tone: "success" },
+    { value: "42%", label: "Parcialmente comprometidos", hint: "17 participantes", tone: "warn" },
+    { value: "18%", label: "Sin compromiso", hint: "6 participantes", tone: "danger" },
   ];
   const row3: CardSpec[] = [
-    { value: "60%", label: "HW Delivery Rate" },
-    { value: "4.7", suffix: "/5", label: "AVG Score", tone: "red" },
-    { value: "70.5%", label: "Survey Response Rate" },
-    { value: "8.2", suffix: "/10", label: "Speakers Rate", tone: "red" },
+    { value: "60%", label: "Entrega de tareas" },
+    { value: "4.7", suffix: "/5", label: "Score promedio", tone: "red" },
+    { value: "70.5%", label: "Respuesta a encuesta" },
+    { value: "8.2", suffix: "/10", label: "Speakers", tone: "red" },
   ];
   const all = [...row1, ...row2, ...row3];
   const indexOf = (spec: CardSpec) => all.indexOf(spec);
 
   return (
-    <PosterFrame tone="quiet" variant={variant} layoutSeed={layoutSeed} showXMark={false}>
+    <PosterFrame tone="quiet" variant={variant} patternName={patternName} bgImage={bgImage} showPattern={showPattern}>
       <TitleCard minWidth={1720} maxWidth={1820} padding={48}>
         <div
           key={cycle}

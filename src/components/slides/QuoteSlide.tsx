@@ -1,20 +1,25 @@
 import { PosterFrame, TitleCard, type PosterVariant } from "./PosterFrame";
+import type { DsPatternName } from "../library/dsPatterns";
 
 export function QuoteSlide({
   quote,
   attribution,
   pageNumber: _pageNumber,
   variant = "gradient-warm",
-  layoutSeed = 2,
+  patternName = "zigzag-simple",
+  bgImage,
+  showPattern = true,
 }: {
   quote: string;
   attribution?: string;
   pageNumber?: number | string;
   variant?: PosterVariant;
-  layoutSeed?: number;
+  patternName?: DsPatternName;
+  bgImage?: string;
+  showPattern?: boolean;
 }) {
   return (
-    <PosterFrame tone="quiet" variant={variant} layoutSeed={layoutSeed}>
+    <PosterFrame tone="quiet" variant={variant} patternName={patternName} bgImage={bgImage} showPattern={showPattern}>
       <TitleCard minWidth={1300} maxWidth={1500} padding={72}>
         <div className="flex flex-col">
           <div className="text-[140px] leading-[0.8] text-[var(--latam-red)] font-semibold">

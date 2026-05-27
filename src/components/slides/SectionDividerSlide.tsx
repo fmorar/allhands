@@ -1,20 +1,25 @@
 import { PosterFrame, TitleCard, type PosterVariant } from "./PosterFrame";
+import type { DsPatternName } from "../library/dsPatterns";
 
 export function SectionDividerSlide({
   number,
   title,
   description,
   variant = "black",
-  layoutSeed = 1,
+  patternName = "natura",
+  bgImage,
+  showPattern = true,
 }: {
   number: string;
   title: string;
   description?: string;
   variant?: PosterVariant;
-  layoutSeed?: number;
+  patternName?: DsPatternName;
+  bgImage?: string;
+  showPattern?: boolean;
 }) {
   return (
-    <PosterFrame tone="loud" variant={variant} layoutSeed={layoutSeed}>
+    <PosterFrame tone="loud" variant={variant} patternName={patternName} bgImage={bgImage} showPattern={showPattern}>
       <TitleCard minWidth={1100} height={520}>
         <div className="flex h-full flex-col items-center justify-center text-center">
           <div className="text-[28px] font-semibold tracking-[0.32em] text-[var(--latam-red)]">
