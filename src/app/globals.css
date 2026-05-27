@@ -1,26 +1,58 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --latam-white: #ffffff;
+  --latam-black: #000000;
+  --latam-red: #e90130;
+  --latam-offwhite: #faf9f6;
+  --latam-purple: #616290;
+  --latam-rule: #e6e4dd;
+  --latam-muted: #6b6b6b;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-latam-white: var(--latam-white);
+  --color-latam-black: var(--latam-black);
+  --color-latam-red: var(--latam-red);
+  --color-latam-offwhite: var(--latam-offwhite);
+  --color-latam-purple: var(--latam-purple);
+  --color-latam-rule: var(--latam-rule);
+  --color-latam-muted: var(--latam-muted);
+  --font-sans: var(--font-lexend);
+  --font-display: var(--font-lexend);
+  --font-hand: var(--font-kalam);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+html,
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-lexend), ui-sans-serif, system-ui, sans-serif;
+}
+
+/* The slide stage is rendered at the source size (595 × 842) and scaled with
+   a CSS transform so font sizes and spacing match the Figma source exactly. */
+.slide-stage {
+  width: 1920px;
+  height: 1080px;
+  transform-origin: top left;
+}
+
+@media print {
+  @page {
+    size: A4 landscape;
+    margin: 0;
+  }
+  .deck-chrome {
+    display: none !important;
+  }
+  .slide-page {
+    page-break-after: always;
+    transform: none !important;
+    width: 100% !important;
+    height: 100vh !important;
+  }
+  .slide-stage {
+    transform: none !important;
+    width: 100% !important;
+    height: 100% !important;
+  }
 }

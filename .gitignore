@@ -39,3 +39,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# runtime user uploads (keep folder via .gitkeep)
+/public/uploads/*
+!/public/uploads/.gitkeep
+
+# local figma references (large screenshots)
+/figma-refs/
