@@ -35,7 +35,7 @@ type VariantSpec = {
 };
 
 const VARIANTS: Record<PosterVariant, VariantSpec> = {
-  // Default — calm off-white background, red+purple accents.
+  // Default — calm off-white background, brand-accent patterns on top.
   cream: {
     background: "var(--latam-offwhite)",
     text: "#000000",
@@ -49,11 +49,11 @@ const VARIANTS: Record<PosterVariant, VariantSpec> = {
     flowerB: "purple",
     flowerC: "black",
   },
-  // High-contrast — black background, red/cream patterns.
+  // High-contrast — black background, off-white/cream patterns.
   black: {
     background: "var(--latam-black)",
     text: "#ffffff",
-    patternTone: "red",
+    patternTone: "cream",
     cardBg: "var(--latam-red)",
     cardText: "#ffffff",
     cardOffsetBg: "var(--latam-purple)",
@@ -63,11 +63,11 @@ const VARIANTS: Record<PosterVariant, VariantSpec> = {
     flowerB: "white",
     flowerC: "red",
   },
-  // Cool — Latam purple with red+light patterns.
+  // Cool — Latam purple with light patterns.
   purple: {
     background: "var(--latam-purple)",
     text: "#ffffff",
-    patternTone: "light",
+    patternTone: "cream",
     cardBg: "#000000",
     cardText: "#ffffff",
     cardOffsetBg: "var(--latam-red)",
@@ -77,11 +77,11 @@ const VARIANTS: Record<PosterVariant, VariantSpec> = {
     flowerB: "black",
     flowerC: "red",
   },
-  // Loud — Radiant Red bg (use sparingly). Patterns in dark.
+  // Loud — Radiant Red bg (use sparingly). Black/cream patterns.
   red: {
     background: "var(--latam-red)",
     text: "#ffffff",
-    patternTone: "dark",
+    patternTone: "black",
     cardBg: "#000000",
     cardText: "#ffffff",
     cardOffsetBg: "var(--latam-purple)",
