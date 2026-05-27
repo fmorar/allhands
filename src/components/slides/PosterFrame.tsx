@@ -128,18 +128,18 @@ const COLUMN_W = 220;
 const TILE_SIZE = 360;
 
 const PROFILES: Record<DsPatternName, Profile> = {
+  // "Strip" patterns sit as a single horizontal band at the top so they
+  // read as a header decoration instead of "framing brackets".
   prehispanic: {
     kind: "strip",
     placements: [
-      { left: 0, right: 0, top: 36, w: 0, h: STRIP_H },
-      { left: 0, right: 0, bottom: 110, w: 0, h: STRIP_H },
+      { left: 0, right: 0, top: 40, w: 0, h: STRIP_H },
     ],
   },
   natura: {
     kind: "strip",
     placements: [
-      { left: 0, right: 0, top: 30, w: 0, h: STRIP_H },
-      { left: 0, right: 0, bottom: 110, w: 0, h: STRIP_H },
+      { left: 0, right: 0, top: 40, w: 0, h: STRIP_H },
     ],
   },
   // "Column" patterns: placed asymmetrically (one side) so they feel like
