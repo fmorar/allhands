@@ -14,44 +14,33 @@ import { ProjectEmbedSlide } from "@/components/slides/ProjectEmbedSlide";
 import { FigmaConfigSlide } from "@/components/slides/FigmaConfigSlide";
 import { DsPattern } from "@/components/library/dsPatterns";
 
-/* Custom decoration for the cover — mix of patterns layered around the
- * black title card. Other slides use a single decorative pattern. */
+/* Custom decoration for the cover — ONE main strip pattern + two small
+ * decorative accents. Keeps the brand vocabulary without feeling busy. */
 const COVER_MIX = (
   <>
+    {/* Hero strip — prehispanic across the top */}
     <DsPattern
       name="prehispanic"
       tone="red"
       opacity={0.9}
       className="absolute"
-      style={{ left: 0, right: 0, top: 24, height: 90 }}
+      style={{ left: 0, right: 0, top: 40, height: 110 }}
     />
-    <DsPattern
-      name="leafs"
-      tone="multi"
-      opacity={0.9}
-      className="absolute"
-      style={{ left: 30, top: 200, bottom: 250, width: 200 }}
-    />
+    {/* Accent 1 — sun mark, top-right */}
     <DsPattern
       name="sun"
       tone="red"
-      opacity={0.9}
+      opacity={0.85}
       className="absolute"
-      style={{ right: 60, top: 200, width: 200, height: 200 }}
+      style={{ right: 80, top: 200, width: 180, height: 180 }}
     />
-    <DsPattern
-      name="natura"
-      tone="red"
-      opacity={0.9}
-      className="absolute"
-      style={{ left: 0, right: 0, bottom: 110, height: 90 }}
-    />
+    {/* Accent 2 — flower mark, bottom-right */}
     <DsPattern
       name="flower"
       tone="purple"
       opacity={0.7}
       className="absolute"
-      style={{ right: 80, bottom: 260, width: 220, height: 220 }}
+      style={{ right: 80, bottom: 260, width: 180, height: 180 }}
     />
   </>
 );
