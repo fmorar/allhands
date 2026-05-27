@@ -14,26 +14,16 @@ import { ProjectEmbedSlide } from "@/components/slides/ProjectEmbedSlide";
 import { FigmaConfigSlide } from "@/components/slides/FigmaConfigSlide";
 import { DsPattern } from "@/components/library/dsPatterns";
 
-/* Custom decoration for the cover — full-bleed prehispanic header band
- * + a sun mark anchored to the top-right corner. Both touch slide edges
- * so they read as architectural, not floating. */
+/* Cover decoration — single full-bleed prehispanic strip across the top.
+ * One pattern, one role: the band that says "this is the start". */
 const COVER_MIX = (
-  <>
-    <DsPattern
-      name="prehispanic"
-      tone="red"
-      opacity={0.9}
-      className="absolute"
-      style={{ left: 0, right: 0, top: 0, height: 120 }}
-    />
-    <DsPattern
-      name="sun"
-      tone="red"
-      opacity={0.9}
-      className="absolute"
-      style={{ right: 0, bottom: 0, width: 240, height: 240 }}
-    />
-  </>
+  <DsPattern
+    name="prehispanic"
+    tone="red"
+    opacity={0.95}
+    className="absolute"
+    style={{ left: 0, right: 0, top: 0, height: 130 }}
+  />
 );
 
 /**
