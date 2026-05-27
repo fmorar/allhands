@@ -12,8 +12,21 @@ const MAX_BYTES = 8 * 1024 * 1024; // 8 MB
 const ALLOWED = new Set(["image/jpeg", "image/png", "image/webp", "image/gif"]);
 
 const hasBlob = !!process.env.BLOB_READ_WRITE_TOKEN;
+// Vercel serverless filesystems are read-only outside /tmp — so without Blob
+// configured we cannot accept uploads in production.
+const isVercel = !!process.env.VERCEL;
 
 export async function POST(req: Request) {
+  if (isVercel && !hasBlob) {
+    return NextResponse.json(
+      {
+        error:
+          "Uploads disabled — Vercel Blob is not connected on this deployment. Install it from the project's Storage tab.",
+      },
+      { status: 503 }
+    );
+  }
+
   const state = await getIcebreaker();
   if (state.status !== "uploading") {
     return NextResponse.json(
