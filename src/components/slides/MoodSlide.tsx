@@ -164,6 +164,22 @@ export function MoodSlide({
                 {voteUrl}
               </div>
             </div>
+            <button
+              onClick={() => {
+                if (
+                  confirm("Reset todos los votos del termómetro?")
+                ) {
+                  fetch("/api/mood", {
+                    method: "POST",
+                    headers: { "content-type": "application/json" },
+                    body: JSON.stringify({ id: "__reset__" }),
+                  });
+                }
+              }}
+              className="mt-2 text-[10px] uppercase tracking-[0.18em] text-white/40 hover:text-white/70"
+            >
+              Reset
+            </button>
           </div>
         </div>
       </TitleCard>
