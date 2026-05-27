@@ -12,17 +12,23 @@ import { AICaravanResultsSlide } from "@/components/slides/AICaravanResultsSlide
 import { PresenterIntroSlide } from "@/components/slides/PresenterIntroSlide";
 import { ProjectEmbedSlide } from "@/components/slides/ProjectEmbedSlide";
 import { FigmaConfigSlide } from "@/components/slides/FigmaConfigSlide";
-import { DsPattern } from "@/components/library/dsPatterns";
-
-/* Cover decoration — single full-bleed prehispanic strip across the top.
- * One pattern, one role: the band that says "this is the start". */
+/* Cover decoration — subtle Prehispanic-9 (light gray) strip across
+ * the top. Rendered direct from the SVG so it stays grayscale. */
+/* eslint-disable @next/next/no-img-element */
 const COVER_MIX = (
-  <DsPattern
-    name="prehispanic"
-    tone="red"
-    opacity={0.95}
-    className="absolute"
-    style={{ left: 0, right: 0, top: 0, height: 130 }}
+  <img
+    src="/patterns-ds/Prehispanic-9.svg"
+    alt=""
+    aria-hidden
+    className="absolute pointer-events-none"
+    style={{
+      left: 0,
+      right: 0,
+      top: 0,
+      width: "100%",
+      height: 130,
+      objectFit: "fill",
+    }}
   />
 );
 
