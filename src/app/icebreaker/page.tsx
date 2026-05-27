@@ -80,7 +80,14 @@ export default function IcebreakerPage() {
         method: "POST",
         body: fd,
       });
-      if (!r.ok) throw new Error(`upload failed (${r.status})`);
+      if (!r.ok) {
+        let msg = `upload failed (${r.status})`;
+        try {
+          const body = (await r.json()) as { error?: string };
+          if (body?.error) msg = body.error;
+        } catch {}
+        throw new Error(msg);
+      }
       setDone(true);
     } catch (e) {
       setError(String((e as Error).message ?? e));
