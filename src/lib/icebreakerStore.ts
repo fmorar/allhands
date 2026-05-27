@@ -83,13 +83,19 @@ export async function getIcebreaker(): Promise<IcebreakerState> {
         STATE_KEY
       ),
       redis.get<number>(VERSION_KEY),
-      redis.lrange<string>(SUBS_KEY, 0, -1),
+      // SDK auto-deserialises JSON values, so list entries come back as
+      // objects (not strings). Tolerate either shape just in case.
+      redis.lrange<IcebreakerSubmission | string>(SUBS_KEY, 0, -1),
     ]);
     status = raw?.status ?? "idle";
     revealStartedAt = raw?.revealStartedAt ?? null;
     version = ver ?? 0;
     submissions = (subs ?? [])
-      .map((s) => safeParse<IcebreakerSubmission>(s))
+      .map((entry) =>
+        typeof entry === "string"
+          ? safeParse<IcebreakerSubmission>(entry)
+          : (entry as IcebreakerSubmission)
+      )
       .filter((x): x is IcebreakerSubmission => !!x);
   } else {
     status = mem.status;
