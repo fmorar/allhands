@@ -37,12 +37,14 @@ export function SlideStage({
     return () => ro.disconnect();
   }, []);
 
-  // When a bg image is set, both the outer (covers letterbox) and the inner
-  // stage paint it. The outer uses background-size: cover so it fills the
-  // viewport; the inner uses the same so the visual content lines up.
+  // When a bg image is set we paint it on the OUTER container (which fills
+  // the viewport) so it covers letterbox bands on non-16:9 displays. The
+  // inner 1920×1080 stage stays transparent and just hosts the slide
+  // content. We use longhand `background*` properties so React doesn't warn
+  // about mixing the `background` shorthand with `backgroundSize` etc.
   const outerStyle: React.CSSProperties = backgroundImage
     ? {
-        background,
+        backgroundColor: background,
         backgroundImage: `url("${backgroundImage}")`,
         backgroundSize: "cover",
         backgroundPosition: "center",
@@ -52,11 +54,7 @@ export function SlideStage({
 
   const innerStyle: React.CSSProperties = {
     transform: `scale(${scale})`,
-    ...(backgroundImage
-      ? {
-          background: "transparent",
-        }
-      : { background }),
+    background: backgroundImage ? "transparent" : background,
   };
 
   return (
