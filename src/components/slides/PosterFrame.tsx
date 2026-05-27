@@ -336,10 +336,10 @@ export function PosterFrame({
         <div className="absolute bottom-0 left-0 right-0">
           <div className="mx-24 mb-8 flex items-end justify-between text-[22px]">
             {cities.map(([place, phrase]) => (
-              <div key={place} className="flex items-baseline gap-3">
-                <span className="italic font-semibold">{place}</span>
+              <div key={place} className="flex items-baseline gap-3 font-normal">
+                <span>{place}</span>
                 <span style={{ opacity: 0.6 }}>·</span>
-                <span className="italic">{phrase}</span>
+                <span>{phrase}</span>
               </div>
             ))}
           </div>
