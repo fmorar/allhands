@@ -272,22 +272,27 @@ export function PosterFrame({
           ))
         ) : null}
 
-        {/* FLOWER ACCENTS — small punctuation marks (kept from DS) */}
-        <FlowerMark
-          color={v.flowerA}
-          size={48}
-          className="absolute left-[80px] top-1/2 -translate-y-1/2"
-        />
-        <FlowerMark
-          color={v.flowerB}
-          size={36}
-          className="absolute right-[60px] top-[60px]"
-        />
-        <FlowerMark
-          color={v.flowerC}
-          size={32}
-          className="absolute right-[100px] bottom-[140px]"
-        />
+        {/* FLOWER ACCENTS — only on pattern slides, since they read as
+            orphan marks on bg-only slides. */}
+        {showPattern && !decoration ? (
+          <>
+            <FlowerMark
+              color={v.flowerA}
+              size={48}
+              className="absolute left-[80px] top-1/2 -translate-y-1/2"
+            />
+            <FlowerMark
+              color={v.flowerB}
+              size={36}
+              className="absolute right-[60px] top-[60px]"
+            />
+            <FlowerMark
+              color={v.flowerC}
+              size={32}
+              className="absolute right-[100px] bottom-[140px]"
+            />
+          </>
+        ) : null}
 
         {/* HASHTAG top-right */}
         <div className="absolute right-24 top-[30px] text-[18px] font-semibold tracking-[0.2em]">
