@@ -172,7 +172,6 @@ export default function IcebreakerPage() {
               ref={fileRef}
               type="file"
               accept="image/*"
-              capture="environment"
               onChange={pickFile}
               className="hidden"
             />

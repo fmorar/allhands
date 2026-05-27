@@ -6,11 +6,10 @@ const SLIDE_W = 1920;
 const SLIDE_H = 1080;
 
 /**
- * Slide stage — always fills 100% of its container (which is 100vw × 100vh).
- * Internal layout is authored at 1920 × 1080 and scaled INDEPENDENTLY on each
- * axis so it stretches to fit the viewport exactly. On 16:9 screens there is
- * no distortion; on other aspect ratios there's mild stretch which keeps all
- * content visible (vs cropping or letterboxing).
+ * Slide stage — fills its container while preserving the 16:9 aspect ratio
+ * of the source design (1920 × 1080). Uses uniform scale so circles stay
+ * round, photos don't squish, etc. On non-16:9 viewports the slide is
+ * centered with a matching background filling the letterbox.
  */
 export function SlideStage({
   children,
@@ -20,17 +19,15 @@ export function SlideStage({
   background?: string;
 }) {
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const [scale, setScale] = useState({ x: 1, y: 1 });
+  const [scale, setScale] = useState(1);
 
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
     const compute = () => {
       const { width, height } = el.getBoundingClientRect();
-      setScale({
-        x: width > 0 ? width / SLIDE_W : 1,
-        y: height > 0 ? height / SLIDE_H : 1,
-      });
+      const s = Math.min(width / SLIDE_W, height / SLIDE_H);
+      setScale(s > 0 ? s : 1);
     };
     compute();
     const ro = new ResizeObserver(compute);
@@ -41,12 +38,12 @@ export function SlideStage({
   return (
     <div
       ref={containerRef}
-      className="slide-page relative w-full h-full overflow-hidden"
+      className="slide-page relative w-full h-full overflow-hidden flex items-center justify-center"
       style={{ background }}
     >
       <div
         className="slide-stage"
-        style={{ transform: `scale(${scale.x}, ${scale.y})`, background }}
+        style={{ transform: `scale(${scale})`, background }}
       >
         {children}
       </div>

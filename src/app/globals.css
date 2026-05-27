@@ -33,7 +33,8 @@ body {
 .slide-stage {
   width: 1920px;
   height: 1080px;
-  transform-origin: top left;
+  transform-origin: center center;
+  flex-shrink: 0;
 }
 
 @media print {

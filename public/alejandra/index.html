@@ -1,0 +1,2167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NOIRE — Maison de Lunel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=GFS+Didot&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { height: 100%; }
+
+/* ════════════════════════════════════════════════════════
+   NOIRE — Design System
+   Maison de Lunel · Luxury Fragrance
+   ════════════════════════════════════════════════════════ */
+:root {
+  /* Fonts */
+  --font-display: 'GFS Didot', Georgia, serif;
+  --font-ui:      'Inter', 'Neue Haas Grotesk Text Std', 'Helvetica Neue', sans-serif;
+  /* Legacy aliases kept for JS refs */
+  --font-title: var(--font-display);
+  --font-body:  var(--font-ui);
+
+  /* ── Color palette ── */
+  --c-bg:            #060402;
+  --c-surface:       rgba(8, 5, 2, 0.92);
+  --c-gold:          #C4A265;
+  --c-gold-dim:      rgba(196,162,101,0.60);
+  --c-gold-subtle:   rgba(196,162,101,0.28);
+  --c-gold-faint:    rgba(196,162,101,0.12);
+  --c-cream:         #F5F0E8;
+  --c-cream-dim:     rgba(245,240,232,0.55);
+  --c-cream-muted:   rgba(245,240,232,0.30);
+  --c-cream-ghost:   rgba(245,240,232,0.12);
+
+  /* ── Type scale ── */
+  --text-hero:    clamp(100px, 15vw, 200px); /* NOIRE title only */
+  --text-display: 38px;   /* section headings, carousel title */
+  --text-subhead: 18px;   /* notes, card values, featured labels */
+  --text-price:   30px;   /* prices */
+  --text-body:    15px;   /* paragraphs, taglines */
+  --text-label:   12px;   /* secondary labels, CTAs, details */
+  --text-micro:   10px;   /* eyebrows, tags, nav items */
+
+  /* ── Letter spacing ── */
+  --track-display:  0.08em;   /* serif headings */
+  --track-label:    0.28em;   /* UI labels */
+  --track-eyebrow:  0.36em;   /* ALL CAPS micro */
+  --track-body:    -0.01em;   /* body paragraphs */
+
+  /* ── Spacing scale (8px base) ── */
+  --sp-1:  8px;
+  --sp-2: 16px;
+  --sp-3: 24px;
+  --sp-4: 32px;
+  --sp-5: 48px;
+  --sp-6: 64px;
+  --sp-7: 96px;
+
+  /* ── Borders & radius ── */
+  --border:         1px solid var(--c-gold-subtle);
+  --border-faint:   1px solid var(--c-gold-faint);
+  --border-hi:      1px solid var(--c-gold-dim);
+  --radius:         2px;   /* flat luxury — buttons, carousel cards */
+  --radius-card:    10px;  /* glass info cards */
+}
+
+body {
+  background: var(--c-bg);
+  font-family: var(--font-ui);
+  color: var(--c-cream);
+}
+
+/* ── Atmospheric background ── */
+#bg {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 55% 75% at 50% 55%,
+      rgba(178,118,62,0.45)  0%,
+      rgba(212,170,124,0.28) 22%,
+      rgba(225,200,168,0.10) 45%,
+      transparent             68%),
+    #ddd5cc;
+}
+body.video-mode { background: #ddd5cc; }
+#grain {
+  position: fixed; inset: 0; z-index: 1; pointer-events: none;
+  opacity: 0.04; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 256px;
+}
+
+/* Three.js canvas sits above bg, below UI */
+canvas { position: fixed; inset: 0; z-index: 2; display: block; }
+
+/* ── Higgsfield video layers ── */
+body.video-mode #three-canvas,
+body.video-mode #smoke-canvas,
+body.video-mode #fp-canvas { opacity: 0; pointer-events: none; }
+
+/* Recolor UI text for cream bg in video mode */
+body.video-mode #brand h1 {
+  color: rgba(255, 248, 235, 0.35);
+  mix-blend-mode: overlay;
+  -webkit-text-stroke: 0;
+  text-shadow: none;
+  filter:
+    drop-shadow(0 1px 0 rgba(255, 255, 255, 0.55))
+    drop-shadow(0 6px 22px rgba(0, 0, 0, 0.10));
+}
+body.video-mode #brand .noire-letter {
+  backdrop-filter: blur(0.5px) brightness(1.06);
+  -webkit-backdrop-filter: blur(0.5px) brightness(1.06);
+}
+body.video-mode #brand .b-maison,
+body.video-mode #brand .b-sub {
+  color: rgba(42,21,5,0.55);
+}
+body.video-mode #brand .b-line {
+  background: linear-gradient(180deg, rgba(42,21,5,0.55), transparent);
+}
+body.video-mode .intent-btn {
+  color: rgba(42,21,5,0.55);
+}
+body.video-mode .intent-btn:hover { color: #2a1505; }
+body.video-mode .intent-btn.active { color: #6b3a14; }
+body.video-mode .intent-btn::after {
+  background: rgba(42,21,5,0.5);
+}
+body.video-mode #back {
+  color: rgba(42,21,5,0.55);
+}
+body.video-mode #back:hover { color: #2a1505; }
+body.video-mode #progress-bar {
+  background: linear-gradient(90deg, transparent, rgba(42,21,5,0.6), rgba(42,21,5,0.25));
+}
+#hero-loop, #hero-idle, #idle-loop, #cap-canvas {
+  position: fixed; inset: 0;
+  width: 100vw; height: 100vh;
+  object-fit: contain;
+  z-index: 3;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+
+/* Edge-bleed canvas: JS stretches the video's left+right edge columns across
+   the letterbox bars so the bg is a perfect color match at every Y. */
+#bleed-bg {
+  position: fixed; inset: 0;
+  width: 100vw; height: 100vh;
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0;
+  filter: blur(40px) saturate(1.05);
+  transition: opacity 0.9s ease;
+}
+body.video-mode #bleed-bg { opacity: 1; }
+body.video-mode #hero-loop { opacity: 1; }
+body.video-mode.hero-idle  #hero-loop { opacity: 0; }
+body.video-mode.hero-idle  #hero-idle { opacity: 1; }
+body.own-scroll #hero-loop, body.own-scroll #hero-idle { opacity: 0; }
+body.own-scroll #cap-canvas { opacity: 1; z-index: 4; }
+body.own-scroll.cap-open #cap-canvas { opacity: 0; }
+body.own-scroll.cap-open #idle-loop { opacity: 1; }
+
+/* Scrub section — provides scroll height while in own mode */
+#scrub-section {
+  position: relative;
+  width: 100%;
+  height: 0;
+  pointer-events: none;
+}
+body.own-scroll #scrub-section { height: 250vh; }
+
+/* Hotspots over the floating cap crystals */
+.hotspot {
+  position: fixed; z-index: 110;
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  background: rgba(196,162,101,0.85);
+  border: none;
+  box-shadow:
+    0 0 0 2px rgba(196,162,101,0.25),
+    0 0 24px rgba(196,162,101,0.7),
+    inset 0 0 6px rgba(255,228,170,0.6);
+  cursor: pointer;
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.6);
+  transition: opacity 0.6s ease, transform 0.4s cubic-bezier(.2,.7,.3,1.2);
+  animation: hotspot-pulse 2.4s ease-in-out infinite;
+  pointer-events: none;
+  padding: 0;
+}
+body.own-scroll.cap-open .hotspot {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translate(-50%, -50%) scale(1);
+}
+.hotspot::before {
+  content: '';
+  position: absolute; inset: -10px;
+  border-radius: 50%;
+  border: 1px solid rgba(196,162,101,0.35);
+  animation: hotspot-ring 2.4s ease-out infinite;
+}
+.hotspot:hover { background: var(--c-gold); }
+.hotspot[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute; bottom: calc(100% + 16px); left: 50%;
+  transform: translateX(-50%);
+  background: var(--c-surface);
+  border: var(--border);
+  color: var(--c-cream);
+  font-family: var(--font-ui);
+  font-size: var(--text-micro);
+  letter-spacing: var(--track-eyebrow);
+  text-transform: uppercase;
+  padding: 8px 16px;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+}
+.hotspot:hover::after { opacity: 1; }
+
+@keyframes hotspot-pulse {
+  0%, 100% { box-shadow: 0 0 0 2px rgba(196,162,101,0.25), 0 0 24px rgba(196,162,101,0.6), inset 0 0 6px rgba(255,228,170,0.5); }
+  50%      { box-shadow: 0 0 0 2px rgba(196,162,101,0.35), 0 0 36px rgba(196,162,101,1.0), inset 0 0 10px rgba(255,228,170,0.85); }
+}
+@keyframes hotspot-ring {
+  0%   { transform: scale(0.9); opacity: 0.7; }
+  100% { transform: scale(1.8); opacity: 0; }
+}
+
+/* Hotspot positions — anchored at the corner of each card that faces the bottle */
+.hotspot[data-card="top"]    { left: calc(var(--vb-l, 0px) + var(--vb-w, 100vw) * 0.5);                   top:    calc(var(--vb-t, 0px) + 132px); }
+.hotspot[data-card="bottom"] { left: calc(var(--vb-l, 0px) + var(--vb-w, 100vw) * 0.5);                   bottom: calc(var(--vb-t, 0px) + 204px); top: auto; }
+.hotspot[data-card="left"]   { left: calc(var(--vb-l, 0px) - 12px);                                       top:    50%; }
+.hotspot[data-card="right"]  { left: calc(var(--vb-l, 0px) + var(--vb-w, 100vw) + 12px);                  top:    50%; }
+
+/* Own-mode (video flow) card layout — float just outside the video box */
+body.own-scroll.cap-open #card-top {
+  left: calc(var(--vb-l, 0px) + var(--vb-w, 100vw) * 0.5);
+  top:  calc(var(--vb-t, 0px) + 28px);
+  transform: translateX(-50%);
+}
+body.own-scroll.cap-open #card-bottom {
+  left: calc(var(--vb-l, 0px) + var(--vb-w, 100vw) * 0.5);
+  top:  auto; right: auto;
+  bottom: calc(var(--vb-t, 0px) + 100px);
+  transform: translateX(-50%);
+}
+body.own-scroll.cap-open #card-left {
+  left: max(20px, calc(var(--vb-l, 0px) - 280px));
+  top:  50%;
+  transform: translateY(-50%);
+}
+body.own-scroll.cap-open #card-right {
+  left: auto;
+  right: max(20px, calc(100vw - var(--vb-l, 0px) - var(--vb-w, 100vw) - 280px));
+  top:  50%;
+  transform: translateY(-50%);
+}
+body.own-scroll.cap-open .card {
+  opacity: 1 !important;
+  pointer-events: auto;
+  transition: opacity 0.6s 0.25s ease, transform 0.6s 0.25s ease, left 0.4s ease, right 0.4s ease, top 0.4s ease, bottom 0.4s ease;
+}
+body.own-scroll.cap-open #cta {
+  opacity: 1 !important;
+  pointer-events: auto;
+  transform: translateX(-50%) translateY(0);
+  transition: opacity 0.6s 0.5s ease;
+}
+
+/* ── Fixed chrome ── */
+#progress-bar {
+  position: fixed; top: 0; left: 0; right: 0; height: 1px; z-index: 200;
+  background: linear-gradient(90deg, transparent, var(--c-gold), rgba(196,162,101,0.4));
+  transform-origin: left; transform: scaleX(0);
+}
+#back {
+  position: fixed; top: var(--sp-4); left: var(--sp-4); z-index: 200;
+  color: var(--c-gold-dim); font-family: var(--font-ui); font-size: var(--text-micro);
+  letter-spacing: var(--track-eyebrow); text-transform: uppercase;
+  text-decoration: none; opacity: 0; transition: color 0.3s;
+}
+#back:hover { color: var(--c-gold); }
+
+#scroll-cue { display: none; }
+
+/* ── Brand text overlay ── */
+#brand {
+  position: fixed; inset: 0; z-index: 100;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  pointer-events: none;
+}
+#brand .b-maison {
+  font-family: var(--font-ui); color: var(--c-gold-dim);
+  font-size: var(--text-micro); letter-spacing: var(--track-eyebrow);
+  text-transform: uppercase; margin-bottom: var(--sp-3);
+  opacity: 0; transform: translateX(-18px);
+}
+#brand h1 {
+  font-family: var(--font-display); color: var(--c-cream);
+  font-size: var(--text-hero); font-weight: 400;
+  letter-spacing: var(--track-display); line-height: 1; overflow: visible;
+  text-shadow: 0 0 80px rgba(196,162,101,0.25), 0 4px 40px rgba(0,0,0,0.95);
+}
+.noire-letter {
+  display: inline-block; opacity: 0;
+  transform: translateY(48px); filter: blur(8px);
+}
+#brand .b-sub {
+  font-family: var(--font-ui); color: var(--c-gold-dim);
+  font-size: var(--text-micro); letter-spacing: var(--track-label);
+  text-transform: uppercase; margin-top: var(--sp-3); opacity: 0;
+}
+#brand .b-line {
+  width: 1px; height: 32px; margin-top: var(--sp-3);
+  background: linear-gradient(180deg, var(--c-gold-dim), transparent);
+  animation: pulse 2.2s ease-in-out infinite; opacity: 0;
+}
+
+/* ── Glass info cards ── */
+.card { position: fixed; z-index: 100; opacity: 0; pointer-events: none; }
+#card-left   { left: 3%;   top: 44%; }
+#card-right  { right: 3%;  top: 44%; }
+#card-top    { left: 23%;  top: 10%; }
+#card-bottom { right: 23%; top: 10%; }
+
+.card-inner {
+  background: var(--c-surface);
+  backdrop-filter: blur(28px); -webkit-backdrop-filter: blur(28px);
+  border: var(--border); border-radius: var(--radius-card);
+  padding: var(--sp-3) var(--sp-4); min-width: 210px;
+  box-shadow: 0 8px 56px rgba(0,0,0,0.75), inset 0 1px 0 rgba(255,255,255,0.06);
+}
+.card-title {
+  font-family: var(--font-ui); color: var(--c-gold-dim);
+  font-size: var(--text-micro); letter-spacing: var(--track-eyebrow);
+  text-transform: uppercase; margin: 0 0 var(--sp-1);
+}
+.card-value {
+  font-family: var(--font-display); color: var(--c-cream);
+  font-size: var(--text-subhead); font-weight: 400;
+  letter-spacing: var(--track-display); margin: 0; line-height: 1.1;
+}
+.card-sub {
+  font-family: var(--font-ui); color: var(--c-gold-dim);
+  font-size: var(--text-micro); letter-spacing: var(--track-label);
+  margin: var(--sp-1) 0 0; line-height: 1.7; white-space: pre-line;
+}
+.card-primary .card-inner {
+  border-color: var(--c-gold-dim);
+  box-shadow: 0 8px 48px rgba(0,0,0,0.5), 0 0 28px rgba(196,162,101,0.18),
+              inset 0 1px 0 rgba(255,255,255,0.10);
+}
+
+/* ── Buttons (shared base) ── */
+.btn {
+  display: inline-block; font-family: var(--font-ui);
+  font-size: var(--text-micro); letter-spacing: var(--track-eyebrow);
+  text-transform: uppercase; text-decoration: none;
+  padding: 13px var(--sp-5); cursor: pointer;
+  border: none; transition: opacity 0.25s, background 0.25s, color 0.25s;
+}
+.btn-primary { background: var(--c-gold); color: var(--c-bg); border-radius: var(--radius); }
+.btn-primary:hover { opacity: 0.88; }
+.btn-secondary {
+  background: transparent; color: var(--c-gold-dim);
+  border: var(--border); border-radius: var(--radius);
+}
+.btn-secondary:hover { color: var(--c-cream); border-color: var(--c-gold-dim); }
+
+/* ── CTA (scroll-driven) ── */
+#cta {
+  position: fixed; bottom: var(--sp-4); left: 50%; z-index: 100;
+  transform: translateX(-50%) translateY(20px);
+  display: flex; gap: var(--sp-2); white-space: nowrap;
+  opacity: 0; pointer-events: none;
+}
+#cta a {
+  display: block; text-decoration: none;
+  font-family: var(--font-ui); font-size: var(--text-micro);
+  letter-spacing: var(--track-eyebrow); text-transform: uppercase;
+}
+.cta-primary  { padding: 13px var(--sp-5); background: var(--c-gold); color: var(--c-bg); border-radius: var(--radius); }
+.cta-secondary {
+  padding: 13px var(--sp-4); background: transparent; color: var(--c-gold-dim);
+  border: var(--border); border-radius: var(--radius);
+}
+.cta-primary:hover  { opacity: 0.88; }
+.cta-secondary:hover { color: var(--c-cream); border-color: var(--c-gold-dim); }
+
+body.scroll-locked { overflow: hidden; }
+
+@keyframes pulse { 0%,100% { transform: scaleY(1); } 50% { transform: scaleY(0.3); } }
+
+/* ── Intent selector ── */
+#intent-selector {
+  position: fixed; right: var(--sp-5); top: 50%;
+  transform: translateY(-50%);
+  display: flex; flex-direction: column; align-items: flex-end;
+  pointer-events: auto; z-index: 100;
+}
+.intent-btn {
+  background: none; border: none; cursor: pointer;
+  font-family: var(--font-ui); font-size: var(--text-micro); font-weight: 400;
+  color: var(--c-cream-muted); letter-spacing: var(--track-eyebrow);
+  text-transform: uppercase; padding: 10px 0;
+  position: relative; text-align: right;
+  transition: color 0.35s, letter-spacing 0.35s;
+}
+.intent-btn::after {
+  content: ''; position: absolute; bottom: 6px; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--c-gold-dim));
+  transform: scaleX(0); transform-origin: right; transition: transform 0.35s;
+}
+.intent-btn:hover { color: var(--c-cream); letter-spacing: 0.40em; }
+.intent-btn:hover::after, .intent-btn.active::after { transform: scaleX(1); }
+.intent-btn.active { color: var(--c-gold); }
+.intent-sep { width: 1px; height: 18px; align-self: flex-end; background: var(--c-gold-subtle); }
+
+/* ── Mode overlay ── */
+#mode-overlay {
+  position: fixed; inset: 0; z-index: 400;
+  background: var(--c-bg); overflow-y: auto; overflow-x: hidden;
+  opacity: 0; pointer-events: none; transition: opacity 0.8s ease;
+}
+#mode-overlay.visible { opacity: 1; pointer-events: all; }
+.ov-nav {
+  position: sticky; top: 0; z-index: 10;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: var(--sp-3) var(--sp-6);
+  background: rgba(6,4,2,0.96); backdrop-filter: blur(16px);
+  border-bottom: var(--border-faint);
+}
+.ov-back {
+  background: none; border: none; cursor: pointer;
+  font-family: var(--font-ui); color: var(--c-cream-dim);
+  font-size: var(--text-micro); letter-spacing: var(--track-eyebrow);
+  text-transform: uppercase; transition: color 0.25s;
+}
+.ov-back:hover { color: var(--c-cream); }
+.ov-mode-label {
+  font-family: var(--font-ui); color: var(--c-gold-dim);
+  font-size: var(--text-micro); letter-spacing: var(--track-eyebrow); text-transform: uppercase;
+}
+
+/* ── Product sections (Discover / Exclusive overlay) ── */
+.ov-products { padding: 0; }
+.ps { display: flex; width: 100%; height: 100vh; position: relative; }
+.ps.ps-rev { flex-direction: row-reverse; }
+
+.ps[data-idx="0"] { background: radial-gradient(ellipse 55% 70% at 28% 52%, rgba(90,32,6,0.85) 0%, rgba(30,10,2,0.95) 55%, #060402 100%); }
+.ps[data-idx="1"] { background: radial-gradient(ellipse 55% 65% at 72% 52%, rgba(70,28,6,0.80) 0%, rgba(25,12,3,0.95) 55%, #060402 100%); }
+.ps[data-idx="2"] { background: radial-gradient(ellipse 55% 70% at 28% 52%, rgba(45,10,65,0.80) 0%, rgba(15,5,28,0.95) 55%, #05030d 100%); }
+
+.ps::before, .ps::after {
+  content: ''; position: absolute; left: 0; right: 0; height: 22vh;
+  pointer-events: none; z-index: 5;
+}
+.ps::before { top: 0;    background: linear-gradient(to bottom, #060402 0%, transparent 100%); }
+.ps::after  { bottom: 0; background: linear-gradient(to top,   #060402 0%, transparent 100%); }
+.ps[data-idx="2"]::before { background: linear-gradient(to bottom, #05030d 0%, transparent 100%); }
+.ps[data-idx="2"]::after  { background: linear-gradient(to top,   #05030d 0%, transparent 100%); }
+
+.ps-img-col {
+  height: 100%; flex-shrink: 0; position: relative; z-index: 6;
+}
+.ps-img-col img {
+  max-height: 68vh; width: auto; height: auto; max-width: 100%;
+  object-fit: contain; display: block;
+}
+.ps-txt-col {
+  flex: 1; height: 100%; display: flex; flex-direction: column;
+  justify-content: center; padding: 0 var(--sp-7);
+  overflow-y: auto; position: relative; z-index: 6;
+}
+
+/* Entry animations */
+.ps-title, .ps-tagline, .ps-notes, .ps-desc,
+.ps-price, .ps-excl-badge, .ps-price-block,
+.ps-review, .ps-cta-link, .ps-dtl-wrap {
+  opacity: 0; transform: translateY(16px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.ps-tagline    { transition-delay: 0.07s; }
+.ps-notes      { transition-delay: 0.13s; }
+.ps-desc       { transition-delay: 0.19s; }
+.ps-price,
+.ps-excl-badge { transition-delay: 0.25s; }
+.ps-price-block { transition-delay: 0.31s; }
+.ps-review     { transition-delay: 0.31s; }
+.ps-cta-link   { transition-delay: 0.37s; }
+.ps-dtl-wrap   { transition-delay: 0.43s; }
+
+.ps.in-view .ps-title, .ps.in-view .ps-tagline, .ps.in-view .ps-notes,
+.ps.in-view .ps-desc, .ps.in-view .ps-price, .ps.in-view .ps-excl-badge,
+.ps.in-view .ps-price-block, .ps.in-view .ps-review,
+.ps.in-view .ps-cta-link, .ps.in-view .ps-dtl-wrap {
+  opacity: 1; transform: translateY(0);
+}
+
+/* Product text hierarchy */
+.ps-title {
+  font-family: var(--font-display); color: var(--c-cream);
+  font-size: var(--text-display); font-weight: 400;
+  letter-spacing: var(--track-display); text-transform: uppercase;
+  line-height: 1.05; margin: 0 0 var(--sp-2);
+}
+.ps-tagline {
+  font-family: var(--font-ui); color: var(--c-cream-muted);
+  font-size: var(--text-body); font-weight: 400;
+  letter-spacing: var(--track-body); line-height: 1.65;
+  margin: 0 0 var(--sp-4);
+}
+.ps-notes {
+  font-family: var(--font-display); color: var(--c-gold);
+  font-size: var(--text-subhead); font-weight: 400;
+  letter-spacing: var(--track-display); margin: 0 0 var(--sp-1);
+}
+.ps-desc {
+  font-family: var(--font-ui); color: var(--c-cream-muted);
+  font-size: var(--text-body); font-weight: 400;
+  letter-spacing: var(--track-body); line-height: 1.65;
+  margin: 0 0 var(--sp-4);
+}
+.ps-price {
+  font-family: var(--font-display); color: var(--c-cream);
+  font-size: var(--text-price); font-weight: 400;
+  letter-spacing: var(--track-display); line-height: 1;
+  margin: 0 0 var(--sp-1);
+}
+.ps-excl-badge {
+  display: inline-block; font-family: var(--font-ui);
+  color: var(--c-gold-dim); font-size: var(--text-micro);
+  letter-spacing: var(--track-eyebrow); text-transform: uppercase;
+  margin: 0 0 var(--sp-2);
+}
+.ps-price-block { display: flex; align-items: baseline; gap: var(--sp-2); margin: 0 0 var(--sp-1); }
+.ps-price-orig {
+  font-family: var(--font-display); color: var(--c-cream-ghost);
+  font-size: var(--text-label); font-weight: 400;
+  text-decoration: line-through; letter-spacing: var(--track-display);
+}
+.ps-price-member {
+  font-family: var(--font-display); color: var(--c-gold);
+  font-size: var(--text-price); font-weight: 400;
+  letter-spacing: var(--track-display); line-height: 1;
+}
+.ps-review {
+  font-family: var(--font-ui); color: var(--c-cream-muted);
+  font-size: var(--text-label); font-weight: 400;
+  letter-spacing: var(--track-body); font-style: italic;
+  margin: 0 0 var(--sp-3);
+}
+.ps[data-idx="1"] .ps-review, .ps[data-idx="2"] .ps-review { display: none; }
+.ps-cta-link {
+  display: inline-block; font-family: var(--font-ui);
+  color: var(--c-cream); font-size: var(--text-label); font-weight: 400;
+  letter-spacing: var(--track-label); text-transform: uppercase;
+  background: none; border: none; padding: 0; cursor: pointer;
+  text-decoration: underline; text-underline-offset: 4px;
+  text-decoration-color: var(--c-cream-muted);
+  transition: opacity 0.6s ease, transform 0.6s ease, color 0.25s, text-decoration-color 0.25s;
+  align-self: flex-start; margin-bottom: var(--sp-4);
+}
+.ps-cta-link:hover { color: var(--c-gold); text-decoration-color: var(--c-gold-dim); }
+
+/* Details expand */
+.ps-dtl-trigger {
+  display: flex; align-items: center; gap: var(--sp-3); cursor: pointer;
+}
+.ps-dtl-trigger:hover .ps-dtl-label { color: var(--c-cream-dim); }
+.ps-dtl-line { flex: 1; height: 1px; background: var(--c-cream-ghost); }
+.ps-dtl-label {
+  font-family: var(--font-ui); color: var(--c-cream-muted);
+  font-size: var(--text-label); font-weight: 300;
+  letter-spacing: var(--track-label); transition: color 0.25s;
+}
+.ps-dtl-body {
+  overflow: hidden; max-height: 0; opacity: 0;
+  transition: max-height 0.42s ease, opacity 0.38s ease;
+}
+.ps-dtl-body.open { max-height: 160px; opacity: 1; padding-top: var(--sp-3); }
+.ps-dtl-text {
+  font-family: var(--font-ui); color: var(--c-cream-muted);
+  font-size: var(--text-label); font-weight: 300; line-height: 1.8;
+}
+
+/* ── Carousel section ── */
+#more-fragrances {
+  position: relative; z-index: 300;
+  background: var(--c-bg); padding: var(--sp-7) 0;
+  border-top: var(--border-faint);
+}
+.mf-header { padding: 0 var(--sp-7); margin-bottom: var(--sp-6); }
+.mf-eyebrow {
+  font-family: var(--font-ui); color: var(--c-gold-dim);
+  font-size: var(--text-micro); letter-spacing: var(--track-eyebrow);
+  text-transform: uppercase; margin: 0 0 var(--sp-2);
+}
+.mf-title {
+  font-family: var(--font-display); color: var(--c-cream);
+  font-size: var(--text-display); font-weight: 400;
+  letter-spacing: var(--track-display); margin: 0;
+}
+.mf-carousel { display: flex; align-items: center; padding: 0 var(--sp-5); gap: var(--sp-3); }
+.mf-track-wrap { overflow: hidden; flex: 1; }
+.mf-track {
+  display: flex; gap: var(--sp-4);
+  transition: transform 0.8s cubic-bezier(0.25, 0.1, 0.1, 1);
+}
+.mf-card {
+  flex: 0 0 300px; border-radius: var(--radius);
+  background: rgba(255,255,255,0.03); border: var(--border-faint);
+  opacity: 0.5; transition: border-color 0.4s, opacity 0.5s, transform 0.4s;
+}
+.mf-card.mf-focused { opacity: 1; border-color: var(--c-gold-subtle); }
+.mf-card.mf-active  { opacity: 1; border-color: var(--c-gold); }
+.mf-card:hover { transform: translateY(-3px); }
+.mf-swatch {
+  height: 200px;
+  border-radius: var(--radius) var(--radius) 0 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+.mf-body { padding: var(--sp-3) var(--sp-3) var(--sp-4); }
+.mf-name {
+  font-family: var(--font-ui); color: var(--c-cream);
+  font-size: var(--text-label); font-weight: 400;
+  letter-spacing: var(--track-eyebrow); text-transform: uppercase;
+  margin: 0 0 var(--sp-1);
+}
+.mf-desc {
+  font-family: var(--font-ui); color: var(--c-gold-dim);
+  font-size: var(--text-micro); letter-spacing: var(--track-label);
+  margin: 0 0 var(--sp-2);
+}
+.mf-price {
+  font-family: var(--font-display); color: var(--c-gold);
+  font-size: var(--text-subhead); font-weight: 400;
+  letter-spacing: var(--track-display); margin: 0 0 var(--sp-3);
+}
+.mf-btn {
+  display: inline-block; text-decoration: none;
+  font-family: var(--font-ui); font-size: var(--text-micro);
+  letter-spacing: var(--track-eyebrow); text-transform: uppercase;
+  color: var(--c-gold-dim); padding: 8px var(--sp-3);
+  border: var(--border-faint); border-radius: var(--radius);
+  transition: color 0.25s, border-color 0.25s;
+}
+.mf-btn:hover { color: var(--c-gold); border-color: var(--c-gold-subtle); }
+.mf-tag {
+  font-family: var(--font-ui); color: var(--c-gold-dim);
+  font-size: var(--text-micro); letter-spacing: var(--track-eyebrow);
+  text-transform: uppercase; font-style: italic;
+}
+.mf-arrow {
+  background: none; border: none; cursor: pointer; flex-shrink: 0;
+  font-family: var(--font-display); font-size: 18px; padding: var(--sp-2) var(--sp-1);
+  color: var(--c-gold-subtle); transition: color 0.3s;
+}
+.mf-arrow:hover { color: var(--c-gold-dim); }
+.mf-arrow:disabled { color: var(--c-gold-faint); cursor: default; }
+
+/* ── Product navigation dots ── */
+#product-nav {
+  position: fixed; bottom: var(--sp-4); right: var(--sp-5); z-index: 200;
+  display: flex; align-items: center; gap: var(--sp-1);
+  opacity: 0; pointer-events: none; transition: opacity 0.5s;
+}
+#product-nav.visible { opacity: 1; pointer-events: all; }
+.pnav-dot {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: var(--c-cream-ghost); border: var(--border-faint);
+  font-family: var(--font-ui); color: var(--c-gold-dim); font-size: var(--text-micro);
+  cursor: pointer; transition: all 0.25s;
+  display: flex; align-items: center; justify-content: center;
+}
+.pnav-dot:hover { border-color: var(--c-gold-subtle); color: var(--c-gold); }
+.pnav-dot.active { background: rgba(196,162,101,0.14); border-color: var(--c-gold); color: var(--c-cream); }
+
+/* ── Product prev / next arrows ── */
+.pnav-arrow {
+  position: fixed; top: 50%; z-index: 200;
+  transform: translateY(-50%);
+  background: none; border: var(--border-faint); border-radius: 50%;
+  width: 44px; height: 44px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; color: var(--c-gold-dim);
+  font-family: var(--font-display); font-size: 18px;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.5s, color 0.25s, border-color 0.25s, background 0.25s;
+}
+.pnav-arrow.visible   { opacity: 1; pointer-events: all; }
+.pnav-arrow.disabled  { opacity: 0.18; pointer-events: none; }
+.pnav-arrow:hover     { color: var(--c-cream); border-color: var(--c-gold-dim); background: rgba(196,162,101,0.08); }
+#pnav-prev { left: var(--sp-4); }
+#pnav-next { right: var(--sp-4); }
+
+/* Scroll container */
+#scroll-container { height: 340vh; }
+</style>
+</head>
+<body class="scroll-locked">
+
+<canvas id="fp-canvas"    style="position:fixed;inset:0;z-index:4;pointer-events:none;"></canvas>
+<canvas id="smoke-canvas" style="position:fixed;inset:0;z-index:50;pointer-events:none;"></canvas>
+
+<!-- Higgsfield video layers -->
+<canvas id="bleed-bg" aria-hidden="true"></canvas>
+<video id="hero-loop"  src="hero-loop.mp4" autoplay muted playsinline preload="auto"></video>
+<video id="hero-idle"  src="hero-idle.mp4" loop muted playsinline preload="auto"></video>
+<canvas id="cap-canvas"></canvas>
+<video id="idle-loop"  src="idle-loop.mp4" loop muted playsinline preload="auto"></video>
+
+<!-- Scrub section: provides scroll height in own mode -->
+<section id="scrub-section" aria-hidden="true"></section>
+
+<!-- Hotspots: one per card, anchored to the corner that faces the bottle -->
+<button class="hotspot" data-card="top"    data-tooltip="Longevity"></button>
+<button class="hotspot" data-card="left"   data-tooltip="Signature Notes"></button>
+<button class="hotspot" data-card="right"  data-tooltip="Collection Price"></button>
+<button class="hotspot" data-card="bottom" data-tooltip="Customer Rating"></button>
+<div id="bg"></div>
+<div id="grain"></div>
+<div id="progress-bar"></div>
+<a id="back" href="#">&larr; NOIRE</a>
+<div id="scroll-cue"><span>Scroll</span><div class="cue-line"></div></div>
+
+<div id="brand">
+  <div class="b-maison">Maison de Lunel</div>
+  <h1><span class="noire-letter">N</span><span class="noire-letter">O</span><span class="noire-letter">I</span><span class="noire-letter">R</span><span class="noire-letter">E</span></h1>
+  <div class="b-sub">Eau de Parfum &middot; 75 ml</div>
+  <div class="b-line"></div>
+</div>
+
+<div id="intent-selector">
+  <button class="intent-btn" data-mode="own">Own the essence</button>
+  <div class="intent-sep"></div>
+  <button class="intent-btn" data-mode="discover">Discover the fragrance</button>
+  <div class="intent-sep"></div>
+  <button class="intent-btn" data-mode="exclusive">Exclusive access</button>
+</div>
+
+<div id="card-left" class="card">
+  <div class="card-inner">
+    <p class="card-title">Signature Notes</p>
+    <p class="card-value">Oud · Amber</p>
+    <p class="card-sub">Bergamot · Black Pepper
+Sandalwood · Rose Absolute</p>
+  </div>
+</div>
+
+<div id="card-right" class="card">
+  <div class="card-inner">
+    <p class="card-title">Collection Price</p>
+    <p class="card-value">€285</p>
+    <p class="card-sub">Eau de Parfum · 75 ml
+Free delivery over €200</p>
+  </div>
+</div>
+
+<div id="card-top" class="card">
+  <div class="card-inner">
+    <p class="card-title">Longevity</p>
+    <p class="card-value">8–12 h</p>
+    <p class="card-sub">Moderate to strong projection</p>
+  </div>
+</div>
+
+<div id="card-bottom" class="card">
+  <div class="card-inner">
+    <p class="card-title">Customer Rating</p>
+    <p class="card-value">★ 4.9</p>
+    <p class="card-sub">324 verified reviews · 98% recommend</p>
+  </div>
+</div>
+
+<div id="cta">
+  <a class="cta-primary"   href="#">Add to Collection</a>
+  <a class="cta-secondary" href="#">View Offers</a>
+</div>
+
+<div id="scroll-container"></div>
+
+<!-- ── Mode overlay: Discover / Exclusive full-page layouts ── -->
+<div id="mode-overlay">
+  <nav class="ov-nav">
+    <button class="ov-back" id="ov-back">← NOIRE</button>
+    <span class="ov-mode-label" id="ov-mode-label"></span>
+  </nav>
+  <div class="ov-products" id="ov-products"></div>
+</div>
+
+<!-- Product navigation dots (OWN mode) -->
+<div id="product-nav">
+  <button class="pnav-dot active" data-pidx="0">1</button>
+  <button class="pnav-dot" data-pidx="1">2</button>
+  <button class="pnav-dot" data-pidx="2">3</button>
+</div>
+
+<!-- Product prev / next arrows (OWN mode) -->
+<button class="pnav-arrow" id="pnav-prev">&#8592;</button>
+<button class="pnav-arrow" id="pnav-next">&#8594;</button>
+
+<section id="more-fragrances">
+  <div class="mf-header">
+    <p class="mf-eyebrow">Continue Exploring</p>
+    <h2 class="mf-title">Further Explorations</h2>
+  </div>
+  <div class="mf-carousel">
+    <button class="mf-arrow" id="mf-prev" disabled>&#8592;</button>
+    <div class="mf-track-wrap">
+      <div class="mf-track" id="mf-track">
+
+        <div class="mf-card mf-active mf-focused">
+          <div class="mf-swatch" style="background-color:#1c0900; background-image:url('img1.png');"></div>
+          <div class="mf-body">
+            <p class="mf-name">NOIRE</p>
+            <p class="mf-desc">Oud · Amber · Sandalwood</p>
+            <p class="mf-price">€285</p>
+            <span class="mf-tag">Current Selection</span>
+          </div>
+        </div>
+
+        <div class="mf-card">
+          <div class="mf-swatch" style="background-color:#1a0f0c; background-image:url('img3.png');"></div>
+          <div class="mf-body">
+            <p class="mf-name">ARDENTE</p>
+            <p class="mf-desc">Rose · Oud · Patchouli</p>
+            <p class="mf-price">€310</p>
+            <a class="mf-btn" href="#">Discover</a>
+          </div>
+        </div>
+
+        <div class="mf-card">
+          <div class="mf-swatch" style="background-color:#0e1018; background-image:url('img2.png');"></div>
+          <div class="mf-body">
+            <p class="mf-name">BLANCHE</p>
+            <p class="mf-desc">Jasmine · White Musk · Iris</p>
+            <p class="mf-price">€265</p>
+            <a class="mf-btn" href="#">Discover</a>
+          </div>
+        </div>
+
+        <div class="mf-card">
+          <div class="mf-swatch" style="background:linear-gradient(160deg,#091008,#102018,#081008)"></div>
+          <div class="mf-body">
+            <p class="mf-name">VERTE</p>
+            <p class="mf-desc">Bergamot · Vetiver · Cedar</p>
+            <p class="mf-price">€245</p>
+            <a class="mf-btn" href="#">Discover</a>
+          </div>
+        </div>
+
+        <div class="mf-card">
+          <div class="mf-swatch" style="background:linear-gradient(160deg,#100c1a,#201530,#0e0a18)"></div>
+          <div class="mf-body">
+            <p class="mf-name">SOMBRE</p>
+            <p class="mf-desc">Iris · Incense · Vetiver</p>
+            <p class="mf-price">€295</p>
+            <a class="mf-btn" href="#">Discover</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <button class="mf-arrow" id="mf-next">&#8594;</button>
+  </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+<script type="module">
+import * as THREE from 'https://esm.sh/three@0.158.0';
+import { GLTFLoader } from 'https://esm.sh/three@0.158.0/examples/jsm/loaders/GLTFLoader';
+import { RoomEnvironment } from 'https://esm.sh/three@0.158.0/examples/jsm/environments/RoomEnvironment';
+const { gsap, ScrollTrigger } = window;
+gsap.registerPlugin(ScrollTrigger);
+
+// ── Renderer (alpha: true → CSS bg shows through) ────────────────────────────
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+renderer.setSize(innerWidth, innerHeight);
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.setClearColor(0x000000, 0);
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.6;
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+document.body.prepend(renderer.domElement);
+
+const scene = new THREE.Scene();
+
+// IBL environment — essential for PBR textures to render correctly
+const pmrem = new THREE.PMREMGenerator(renderer);
+pmrem.compileEquirectangularShader();
+const envScene = new RoomEnvironment(0.0);
+const envTex   = pmrem.fromScene(envScene).texture;
+// Tint environment warm amber
+scene.environment = envTex;
+pmrem.dispose();
+const camera = new THREE.PerspectiveCamera(36, innerWidth / innerHeight, 0.1, 100);
+camera.position.set(0, 0.3, 8.5);
+camera.lookAt(0, 0.6, 0);
+
+// ── Lights ────────────────────────────────────────────────────────────────────
+scene.add(new THREE.AmbientLight(0x3A1A06, 4.0));
+
+// Key: warm soft-box upper right — main illumination
+const keyLight = new THREE.DirectionalLight(0xFFDDA0, 9.0);
+keyLight.position.set(5, 9, 5);
+keyLight.castShadow = true;
+keyLight.shadow.mapSize.set(2048, 2048);
+keyLight.shadow.bias = -0.0001;
+scene.add(keyLight);
+
+// Rim: cool blue-white from left-back — catches crystal facets
+const rimLight = new THREE.DirectionalLight(0xD0E8FF, 3.0);
+rimLight.position.set(-6, 3, -6);
+scene.add(rimLight);
+
+// Warm under-bounce — amber floor glow like in the reference
+const goldLight = new THREE.PointLight(0xD4780A, 10, 18);
+goldLight.position.set(0, -3, 4);
+scene.add(goldLight);
+
+const fillLight = new THREE.DirectionalLight(0x6B2E08, 1.5);
+
+// Warm back light — creates the amber glow through the glass like in the reference
+const backLight = new THREE.PointLight(0xE08020, 12, 20);
+backLight.position.set(0, 1, -6);
+scene.add(backLight);
+fillLight.position.set(0, -5, 3);
+scene.add(fillLight);
+
+// ── Bottle group ──────────────────────────────────────────────────────────────
+const bottleGroup = new THREE.Group();
+scene.add(bottleGroup);
+
+const CAP_BASE_Y = 0;
+
+// ── Per-model state — filled as each GLB loads ────────────────────────────────
+// { modelGroup, capTarget, capBaseY }
+const modelStates = [];
+let activeModelIdx = 0;
+
+// Cap proxy — always reads/writes the active model's cap group
+const capGroup = {
+  position: {
+    get y() {
+      const s = modelStates[activeModelIdx];
+      return s ? s.capTarget.position.y - s.capBaseY : 0;
+    },
+    set y(v) {
+      const s = modelStates[activeModelIdx];
+      if (s) s.capTarget.position.y = s.capBaseY + v;
+    },
+  },
+};
+
+// ── Shared materials (same look across all bottles) ───────────────────────────
+const darkGlass = new THREE.MeshPhysicalMaterial({
+  color: new THREE.Color(0x3D1E0A), metalness: 0.0, roughness: 0.04,
+  envMapIntensity: 0.0, clearcoat: 1.0, clearcoatRoughness: 0.03,
+  transparent: true, opacity: 0.98, side: THREE.DoubleSide,
+});
+const crystalMat = new THREE.MeshPhysicalMaterial({
+  color: new THREE.Color(0xD4C8B8), metalness: 0.0, roughness: 0.0,
+  transmission: 0.97, thickness: 0.6, ior: 2.0,
+  envMapIntensity: 0.18, clearcoat: 0.5, clearcoatRoughness: 0.0,
+  transparent: true, side: THREE.DoubleSide,
+});
+const goldMat = new THREE.MeshStandardMaterial({
+  color: new THREE.Color(0xC4892A), metalness: 1.0, roughness: 0.06, envMapIntensity: 3.0,
+});
+
+// ── Product-specific materials ────────────────────────────────────────────────
+
+// Product 1 — Smoked Vanilla: espresso glass body + dark bronze metallic cap
+const smokedGlass = new THREE.MeshPhysicalMaterial({
+  color: new THREE.Color(0x2B1908), metalness: 0.0, roughness: 0.04,
+  envMapIntensity: 1.2, clearcoat: 1.0, clearcoatRoughness: 0.03,
+  transparent: true, opacity: 0.97, side: THREE.DoubleSide,
+});
+const darkBronzeCap = new THREE.MeshStandardMaterial({
+  color: new THREE.Color(0x1E1208), metalness: 1.0, roughness: 0.16,
+  envMapIntensity: 3.5,
+});
+const antiqueGold = new THREE.MeshStandardMaterial({
+  color: new THREE.Color(0x7A5C18), metalness: 1.0, roughness: 0.10,
+  envMapIntensity: 3.5,
+});
+
+// Product 2 — Velvet Bloom: deep violet glass + dark plum cap + textured collar
+const velvetGlass = new THREE.MeshPhysicalMaterial({
+  color: new THREE.Color(0x1C0535), metalness: 0.0, roughness: 0.03,
+  envMapIntensity: 1.4, clearcoat: 1.0, clearcoatRoughness: 0.02,
+  transparent: true, opacity: 0.96, side: THREE.DoubleSide,
+});
+const plumCap = new THREE.MeshStandardMaterial({
+  color: new THREE.Color(0x3A1155), metalness: 0.75, roughness: 0.22,
+  envMapIntensity: 2.8,
+});
+const plumCollar = new THREE.MeshStandardMaterial({
+  color: new THREE.Color(0x28093E), metalness: 0.95, roughness: 0.38,
+  envMapIntensity: 2.5,
+});
+
+// Per-product material sets — index matches PRODUCTS array
+const PRODUCT_MATS = [
+  { body: darkGlass,   cap: crystalMat,   collar: goldMat     }, // 0 — Signature d'Ambre
+  { body: smokedGlass, cap: darkBronzeCap, collar: antiqueGold }, // 1 — Smoked Vanilla
+  { body: velvetGlass, cap: plumCap,       collar: plumCollar  }, // 2 — Velvet Bloom
+];
+
+// ── Generic GLB loader ────────────────────────────────────────────────────────
+function loadModel(url, productIdx) {
+  const loader = new GLTFLoader();
+  loader.load(url, (gltf) => {
+    const model = gltf.scene;
+
+    // Normalise height to ~3 units
+    const box0 = new THREE.Box3().setFromObject(model);
+    const sz   = box0.getSize(new THREE.Vector3());
+    const sc   = 3.0 / sz.y;
+    model.scale.setScalar(sc);
+    const ctr = box0.getCenter(new THREE.Vector3());
+    model.position.set(-ctr.x * sc, -(box0.min.y + sz.y * 0.5) * sc, -ctr.z * sc);
+
+    // Wrap so we can show/hide independently
+    const modelGroup = new THREE.Group();
+    modelGroup.add(model);
+    bottleGroup.add(modelGroup);
+    model.updateMatrixWorld(true);
+
+    // Pick material set for this product
+    const mats   = PRODUCT_MATS[productIdx] || PRODUCT_MATS[0];
+    const modelBox = new THREE.Box3().setFromObject(model);
+    const splitY   = modelBox.min.y + (modelBox.max.y - modelBox.min.y) * 0.62;
+
+    model.traverse(n => {
+      if (!n.isMesh) return;
+      n.castShadow = n.receiveShadow = true;
+      const nm  = (n.name || '').toLowerCase();
+      const mby = new THREE.Box3().setFromObject(n);
+      const cy  = (mby.min.y + mby.max.y) / 2;
+      if (/gold|collar|ring|metal|band/.test(nm)) n.material = mats.collar;
+      else if (cy > splitY) n.material = mats.cap;
+      else n.material = mats.body;
+    });
+
+    // Cap animation group
+    const capAnimGroup = new THREE.Group();
+    modelGroup.add(capAnimGroup);
+    const capMeshes = [];
+    model.traverse(n => {
+      if (!n.isMesh) return;
+      const b  = new THREE.Box3().setFromObject(n);
+      if ((b.min.y + b.max.y) / 2 > splitY) capMeshes.push(n);
+    });
+    capMeshes.forEach(n => capAnimGroup.attach(n));
+
+    modelStates[productIdx] = {
+      modelGroup,
+      capTarget: capAnimGroup,
+      capBaseY:  capAnimGroup.position.y,
+    };
+
+    // Only product 0 visible by default
+    modelGroup.visible = (productIdx === activeModelIdx);
+    console.log(`Model ${productIdx} loaded (${url}), cap meshes: ${capMeshes.length}`);
+
+  }, undefined, err => console.error('GLB load error:', url, err));
+}
+
+loadModel('bottle2.glb',  0);
+loadModel('perfume2.glb', 1);
+loadModel('perfume3.glb', 2);
+
+// ── Switch active bottle with a brief scale-out → in ─────────────────────────
+function switchModel(idx) {
+  if (idx === activeModelIdx) return;
+  if (!modelStates[idx]) return; // not loaded yet
+
+  gsap.to(bottleGroup.scale, {
+    x: 0.01, y: 0.01, z: 0.01, duration: 0.3, ease: 'power2.in',
+    onComplete: () => {
+      modelStates[activeModelIdx]?.modelGroup && (modelStates[activeModelIdx].modelGroup.visible = false);
+      activeModelIdx = idx;
+      const s = modelStates[idx];
+      s.modelGroup.visible = true;
+      // In OWN mode cap is already open — keep it open on new model too
+      s.capTarget.position.y = s.capBaseY + 9;
+      gsap.to(bottleGroup.scale, { x: 1, y: 1, z: 1, duration: 0.55, ease: 'power2.out' });
+    },
+  });
+}
+
+// ── Particles ─────────────────────────────────────────────────────────────────
+function makeParticles(count, rMin, rMax, ptSize, ptOpacity, colorFn) {
+  const pos = new Float32Array(count * 3);
+  const col = new Float32Array(count * 3);
+  for (let i = 0; i < count; i++) {
+    const r  = rMin + Math.random() * (rMax - rMin);
+    const th = Math.random() * Math.PI * 2;
+    const ph = Math.acos(2 * Math.random() - 1);
+    pos[i*3]   = r * Math.sin(ph) * Math.cos(th);
+    pos[i*3+1] = r * Math.sin(ph) * Math.sin(th);
+    pos[i*3+2] = r * Math.cos(ph);
+    const [r_, g_, b_] = colorFn(Math.random());
+    col[i*3] = r_; col[i*3+1] = g_; col[i*3+2] = b_;
+  }
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  geo.setAttribute('color',    new THREE.BufferAttribute(col, 3));
+  return new THREE.Points(geo, new THREE.PointsMaterial({
+    size: ptSize, vertexColors: true, transparent: true, opacity: ptOpacity,
+    blending: THREE.AdditiveBlending, depthWrite: false, sizeAttenuation: true,
+  }));
+}
+
+const outerPts = makeParticles(1800, 6, 22, 0.06, 0.55, t => [0.40+t*0.35, 0.24+t*0.28, 0.04+t*0.08]);
+const innerPts = makeParticles(500,  2,  7, 0.04, 0.45, t => [0.70+t*0.30, 0.54+t*0.26, 0.14+t*0.14]);
+scene.add(outerPts);
+scene.add(innerPts);
+
+// ── Scent vapour — 2D canvas overlay ─────────────────────────────────────────
+// Projects the bottle neck from 3D → screen space, draws soft circles on top.
+const smokeCanvas = document.getElementById('smoke-canvas');
+const smokeCtx    = smokeCanvas.getContext('2d');
+smokeCanvas.width  = innerWidth;
+smokeCanvas.height = innerHeight;
+window.addEventListener('resize', () => {
+  smokeCanvas.width  = innerWidth;
+  smokeCanvas.height = innerHeight;
+});
+
+const SMOKE_N    = 80;
+const smokeParts = Array.from({ length: SMOKE_N }, () =>
+  ({ active:false, x:0, y:0, vx:0, vy:0, life:0, maxLife:1, r:0, phase:0 })
+);
+let smokeSpawnT = 0, smokeLastT = 0;
+const _neckVec  = new THREE.Vector3();
+
+function updateSmoke(t) {
+  const dt = Math.min(t - smokeLastT, 0.05); smokeLastT = t;
+  smokeCtx.clearRect(0, 0, smokeCanvas.width, smokeCanvas.height);
+
+  if (scrollP <= activeCap[0]) return;
+
+  // Project bottle neck 3D → screen
+  _neckVec.set(0, bottleGroup.position.y + 0.38, 0);
+  _neckVec.project(camera);
+  const sx = (_neckVec.x  + 1) / 2 * smokeCanvas.width;
+  const sy = (-_neckVec.y + 1) / 2 * smokeCanvas.height;
+
+  // Spawn ~20 particles/sec
+  smokeSpawnT += dt;
+  while (smokeSpawnT >= 0.05) {
+    smokeSpawnT -= 0.05;
+    const p = smokeParts.find(p => !p.active);
+    if (p) {
+      p.active  = true;
+      p.x       = sx + (Math.random() - 0.5) * 12;
+      p.y       = sy;
+      p.vx      = (Math.random() - 0.5) * 0.5;
+      p.vy      = -(2.5 + Math.random() * 2.0);
+      p.maxLife = 2.5 + Math.random() * 1.5;
+      p.life    = p.maxLife;
+      p.r       = 14 + Math.random() * 8;
+      p.phase   = Math.random() * Math.PI * 2;
+    }
+  }
+
+  smokeCtx.save();
+  smokeCtx.globalCompositeOperation = 'screen';
+
+  for (const p of smokeParts) {
+    if (!p.active) continue;
+    p.life -= dt;
+    if (p.life <= 0) { p.active = false; continue; }
+
+    // Sinusoidal horizontal curl as it rises
+    p.x  += p.vx + Math.sin(t * 1.8 + p.phase) * 0.7;
+    p.y  += p.vy;
+    p.vy *= 0.993;
+    p.r  += 1.4;
+
+    const norm  = p.life / p.maxLife;
+    let alpha = norm > 0.85 ? (1 - norm) / 0.15
+              : norm < 0.25 ? norm / 0.25
+              : 1.0;
+    alpha *= 0.80;
+
+    const grad = smokeCtx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r);
+    grad.addColorStop(0,   `rgba(255,230,170,${alpha})`);
+    grad.addColorStop(0.45,`rgba(230,195,130,${alpha * 0.55})`);
+    grad.addColorStop(1,   `rgba(200,160,90,0)`);
+    smokeCtx.beginPath();
+    smokeCtx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    smokeCtx.fillStyle = grad;
+    smokeCtx.fill();
+  }
+
+  smokeCtx.restore();
+}
+
+// ── Initial state ──────────────────────────────────────────────────────────────
+const REST_Y = -0.15;
+bottleGroup.scale.setScalar(0.01);
+bottleGroup.position.y = -5;
+
+// ── Entrance ──────────────────────────────────────────────────────────────────
+gsap.timeline({ delay: 0.4 })
+  .to(bottleGroup.scale,    { x:1, y:1, z:1, duration:1.8, ease:'expo.out' }, 0)
+  .to(bottleGroup.position, { y: REST_Y, duration:1.8, ease:'expo.out' }, 0)
+  // Maison de Lunel slides in from left
+  .to('#brand .b-maison', { opacity:1, x:0, duration:1.0, ease:'power3.out' }, 0.6)
+  // Each letter rises and unblurs with stagger
+  .to('.noire-letter', {
+    opacity:1, y:0, filter:'blur(0px)',
+    duration:1.3, ease:'expo.out', stagger:0.08,
+  }, 0.72)
+  // Subtitle fades in
+  .to('#brand .b-sub', { opacity:1, duration:0.9, ease:'power2.out' }, 1.35)
+  // Decorative line last
+  .to('#brand .b-line', { opacity:1, duration:0.7, ease:'power2.out' }, 1.55)
+  .to('#back',  { opacity:1, duration:0.8, ease:'power2.out' }, 1.0);
+
+// Idle rotation handled in render loop — gives scroll full control
+const idleRotation = { paused: () => false, pause: () => {}, play: () => {} }; // stub
+
+// Gold light orbit
+gsap.to(goldLight.position, { x:-4, z:-4, duration:9, repeat:-1, yoyo:true, ease:'sine.inOut' });
+
+// Particle rotation
+gsap.to(outerPts.rotation, { y: Math.PI*2,  duration:90, repeat:-1, ease:'none' });
+gsap.to(innerPts.rotation, { y:-Math.PI*2, duration:42, repeat:-1, ease:'none' });
+
+// ── Scroll timeline ───────────────────────────────────────────────────────────
+
+// Linear map with clamping
+function remap(v, i0, i1, o0, o1) {
+  return o0 + Math.max(0, Math.min(1, (v-i0)/(i1-i0))) * (o1-o0);
+}
+
+// ── State ──────────────────────────────────────────────────────────────────────
+const cardEls = {
+  left:   document.getElementById('card-left'),
+  right:  document.getElementById('card-right'),
+  top:    document.getElementById('card-top'),
+  bottom: document.getElementById('card-bottom'),
+};
+const ctaEl = document.getElementById('cta');
+
+const cardXform = {
+  left:   (p,s0,s1) => `translateY(-50%) translateX(${remap(p,s0,s1,-48,0)}px)`,
+  right:  (p,s0,s1) => `translateY(-50%) translateX(${remap(p,s0,s1, 48,0)}px)`,
+  top:    (p,s0,s1) => `translateY(${remap(p,s0,s1,-32,0)}px)`,
+  bottom: (p,s0,s1) => `translateY(${remap(p,s0,s1,-32,0)}px)`,
+};
+
+let cardOrder       = ['left','right','top','bottom'];
+let ctaRange        = [0.72, 0.82];
+let activeCap       = [0.08, 0.65];  // [scrollStart, scrollEnd] for cap exit
+let bypassScrollAnim = false;        // true in OWN mode (instant reveal, no scroll)
+
+let scrollP  = 0;  // updated every scroll tick — read in render loop
+let autoRotY = 0;  // accumulated idle rotation — render loop owns y-rotation
+
+ScrollTrigger.create({
+  trigger: '#scroll-container',
+  start: 'top top',
+  end: 'bottom bottom',
+  scrub: 0.8,
+  onUpdate: (st) => {
+    if (bypassScrollAnim) return;
+    const p = st.progress;
+    scrollP = p;
+
+    // Progress bar
+    document.getElementById('progress-bar').style.transform = `scaleX(${p})`;
+
+    // ── Brand text: fade out 0.06→0.18, move up
+    const bOp = remap(p, 0.06, 0.18, 1, 0);
+    const bY  = remap(p, 0.06, 0.22, 0, -28);
+    const brand = document.getElementById('brand');
+    brand.style.opacity   = bOp;
+    brand.style.transform = `translateY(${bY}px)`;
+
+    // ── Cap: exits frame at rate/range set by active mode
+    capGroup.position.y = CAP_BASE_Y + remap(p, activeCap[0], activeCap[1], 0, 10);
+
+    // ── Bottle body: slight descent 0.20→0.55
+    bottleGroup.position.y = REST_Y + remap(p, 0.20, 0.55, 0, -0.4);
+
+    // ── Cards: stagger in the order defined by active persona ──
+    const SLOTS = [[0.38,0.50],[0.43,0.55],[0.48,0.60],[0.53,0.65]];
+    cardOrder.forEach((id, i) => {
+      const el = cardEls[id], [s0,s1] = SLOTS[i];
+      el.style.opacity   = remap(p, s0, s1, 0, 1);
+      el.style.transform = cardXform[id](p, s0, s1);
+    });
+
+    // ── CTA ──
+    const ctaOp = remap(p, ctaRange[0], ctaRange[1], 0, 1);
+    ctaEl.style.opacity       = ctaOp;
+    ctaEl.style.transform     = `translateX(-50%) translateY(${remap(p, ctaRange[0], ctaRange[1], 20, 0)}px)`;
+    ctaEl.style.pointerEvents = ctaOp > 0.5 ? 'all' : 'none';
+  }
+});
+
+// ── Experience modes ───────────────────────────────────────────────────────────
+const MODES = {
+
+  discover: {
+    // Full-page overlay layout — Frame 49 style
+    overlay:      true,
+    overlayLabel: 'Discover the Fragrance',
+    instant:      false,
+  },
+
+  own: {
+    // Instant reveal: all 4 cards around the bottle + product navigation
+    instant:   true,
+    highlight: 'right',
+    capRange:  [0, 0],
+    ctaRange:  [0, 0],
+    cta:       { primary: 'Add to Collection', secondary: 'View Details' },
+    cards: {
+      right:  { title: 'Collection Price', value: '€285',      sub: 'Eau de Parfum · 75 ml\nFree worldwide delivery' },
+      left:   { title: 'Signature Notes',  value: 'Oud · Amber', sub: 'Warm amber · Dark woods\nA trace of something untamed' },
+      top:    { title: 'Longevity',        value: '8–12 h',    sub: 'Strong projection' },
+      bottom: { title: 'Rating',           value: '★ 4.9',     sub: '324 reviews · 98% recommend' },
+    },
+  },
+
+  exclusive: {
+    // Full-page overlay layout — Frame 50 style
+    overlay:      true,
+    overlayLabel: 'Exclusive Access',
+    instant:      false,
+  },
+};
+
+function applyMode(id) {
+  const cfg = MODES[id];
+
+  // Active intent button
+  document.querySelectorAll('.intent-btn').forEach(b =>
+    b.classList.toggle('active', b.dataset.mode === id)
+  );
+
+  if (cfg.overlay) {
+    // ── DISCOVER / EXCLUSIVE: full-page overlay layout ─────────────────────
+    document.getElementById('ov-mode-label').textContent = cfg.overlayLabel;
+    buildOverlay(id);
+    document.getElementById('mode-overlay').classList.add('visible');
+    return;
+  }
+
+  if (cfg.instant) {
+    // ── OWN: GSAP reveal, all 4 cards, no scroll ───────────────────────────
+    bypassScrollAnim = true;
+
+    Object.values(cardEls).forEach(el => el.classList.remove('card-primary'));
+    cardEls[cfg.highlight].classList.add('card-primary');
+
+    ctaEl.querySelector('.cta-primary').textContent   = cfg.cta.primary;
+    ctaEl.querySelector('.cta-secondary').textContent = cfg.cta.secondary;
+
+    // Cap exits fast
+    gsap.to(capGroup.position, { y: CAP_BASE_Y + 9, duration: 0.35, ease: 'power2.in' });
+
+    // Brand text fades out
+    gsap.to('#brand', { opacity: 0, y: -18, duration: 0.5, ease: 'power2.in' });
+
+    // All 4 cards animate in — left/right use yPercent so GSAP owns the centering
+    gsap.fromTo(cardEls.right,
+      { x: 56, yPercent: -50, opacity: 0 },
+      { x: 0, yPercent: -50, opacity: 1, duration: 0.65, delay: 0.24, ease: 'power2.out' }
+    );
+    gsap.fromTo(cardEls.left,
+      { x: -56, yPercent: -50, opacity: 0 },
+      { x: 0, yPercent: -50, opacity: 1, duration: 0.65, delay: 0.36, ease: 'power2.out' }
+    );
+    gsap.fromTo(cardEls.top,
+      { y: -36, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.65, delay: 0.48, ease: 'power2.out' }
+    );
+    gsap.fromTo(cardEls.bottom,
+      { y: -36, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.65, delay: 0.60, ease: 'power2.out' }
+    );
+
+    // CTA + product nav + arrows
+    ctaEl.style.transform = 'translateX(-50%) translateY(0px)';
+    gsap.to(ctaEl, { opacity: 1, duration: 0.6, delay: 0.7 });
+    setTimeout(() => { ctaEl.style.pointerEvents = 'all'; }, 1400);
+    document.getElementById('product-nav').classList.add('visible');
+    pnavPrev.classList.add('visible');
+    pnavNext.classList.add('visible');
+    pnavIdx = 0;
+    pnavPrev.classList.add('disabled');
+    pnavNext.classList.remove('disabled');
+    loadOwnProduct(0);
+  }
+}
+
+// ── Products data ─────────────────────────────────────────────────────────────
+const PRODUCTS = [
+  {
+    label: 'No. 1',
+    name: "SIGNATURE D'AMBRE",
+    tagline: 'Distilled from endless nights.',
+    notes: 'Oud · Amber · Sandalwood',
+    notesDesc: 'Warm woods that linger intimately on the skin.',
+    price: '€285', memberPrice: '€228', discountPct: 20,
+    quote: '"It lingers like a memory."',
+    ctaLabel: 'Own the Essence',
+    img: 'img1.png',
+    bg: 'radial-gradient(ellipse 80% 90% at 50% 55%, #5c2208 0%, #1e0a02 55%, #060402 100%)',
+    // OWN mode card data
+    sub: 'Eau de Parfum · 75 ml', delivery: 'Free worldwide delivery',
+    rating: '★ 4.9', reviews: '324 verified reviews · 98% recommend',
+    longevity: '8–12 h · Strong projection',
+  },
+  {
+    label: 'No. 2',
+    name: 'SMOKED VANILLA',
+    tagline: 'Where fire softens into something intimate.',
+    notes: 'Smoked Wood · Vanilla · Spice',
+    notesDesc: 'A slow burn of warmth and shadow. Never loud, always felt.',
+    price: '€285', memberPrice: '€214', discountPct: 25,
+    quote: '"It lingers like a memory."',
+    ctaLabel: 'Own the Essence',
+    img: 'img3.png',
+    bg: 'radial-gradient(ellipse 80% 90% at 50% 55%, #3d1a05 0%, #160a02 55%, #060402 100%)',
+    sub: 'Eau de Parfum · 75 ml', delivery: 'Free worldwide delivery',
+    rating: '★ 4.8', reviews: '187 verified reviews · 96% recommend',
+    longevity: '10–14 h · Strong projection',
+  },
+  {
+    label: 'No. 3',
+    name: 'VELVET BLOOM',
+    tagline: "It doesn't bloom. It reveals.",
+    notes: 'Oud · Amber · Sandalwood',
+    notesDesc: 'Soft florals and rose settle into warm woods.',
+    price: '€285', memberPrice: '€242', discountPct: 15,
+    quote: '"It lingers like a memory."',
+    ctaLabel: 'Own the Essence',
+    img: 'img2.png',
+    bg: 'radial-gradient(ellipse 80% 90% at 50% 55%, #28084a 0%, #0e041e 55%, #05030d 100%)',
+    sub: 'Eau de Parfum · 75 ml', delivery: 'Free worldwide delivery',
+    rating: '★ 4.7', reviews: '241 verified reviews · 94% recommend',
+    longevity: '6–9 h · Moderate projection',
+  },
+];
+
+// Tracks ScrollTriggers created inside the overlay so we can kill them on reset
+let _overlayTriggers = [];
+
+// ── Build overlay: cinematic luxury layout ────────────────────────────────────
+function buildOverlay(modeId) {
+  // Kill previous overlay scroll triggers
+  _overlayTriggers.forEach(st => st.kill());
+  _overlayTriggers = [];
+
+  const container = document.getElementById('ov-products');
+  container.innerHTML = '';
+
+  const isExclusive = modeId === 'exclusive';
+  const overlayEl   = document.getElementById('mode-overlay');
+  overlayEl.scrollTop = 0;
+
+  PRODUCTS.forEach((p, i) => {
+    const isReverse = i % 2 !== 0;  // 0,2 = image left; 1 = image right
+    const ctaText   = isExclusive ? 'Request Private Access' : 'Own the Essence';
+
+    // ── Section ──
+    const section = document.createElement('section');
+    section.className = 'ps' + (isReverse ? ' ps-rev' : '');
+    section.dataset.idx = i;
+    section.style.cssText = 'display:flex;width:100%;height:100vh;' + (isReverse ? 'flex-direction:row-reverse;' : '');
+
+    // ── Image column ──
+    const imgCol = document.createElement('div');
+    imgCol.className = 'ps-img-col';
+    const outerPad = isReverse ? '0 72px 0 24px' : '0 24px 0 72px';
+    imgCol.style.cssText = `width:45%;height:100%;flex-shrink:0;display:flex;align-items:center;justify-content:center;padding:${outerPad};box-sizing:border-box;`;
+    const imgEl = document.createElement('img');
+    imgEl.src = p.img;
+    imgEl.alt = p.name;
+    imgEl.style.cssText = 'max-height:68vh;width:auto;height:auto;max-width:100%;object-fit:contain;display:block;';
+    imgCol.appendChild(imgEl);
+
+    // ── Text column ──
+    const txtCol = document.createElement('div');
+    txtCol.className = 'ps-txt-col';
+    const priceHTML = isExclusive
+      ? `<span class="ps-excl-badge">Accès Exclusif &middot; &minus;${p.discountPct}%</span>
+         <div class="ps-price-block">
+           <span class="ps-price-orig">${p.price}</span>
+           <span class="ps-price-member">${p.memberPrice}</span>
+         </div>`
+      : `<p class="ps-price">${p.price}</p>`;
+
+    txtCol.innerHTML = `
+      <h2 class="ps-title">${p.name}</h2>
+      <p class="ps-tagline">${p.tagline}</p>
+      <p class="ps-notes">${p.notes}</p>
+      <p class="ps-desc">${p.notesDesc}</p>
+      ${priceHTML}
+      <p class="ps-review">${p.quote}</p>
+      <button class="ps-cta-link">${ctaText}</button>
+      <div class="ps-dtl-wrap">
+        <div class="ps-dtl-trigger">
+          <span class="ps-dtl-label">Details</span>
+          <span class="ps-dtl-line"></span>
+        </div>
+        <div class="ps-dtl-body">
+          <p class="ps-dtl-text">${p.longevity}<br>${p.sub} &middot; ${p.delivery}</p>
+        </div>
+      </div>
+    `;
+
+    section.appendChild(imgCol);
+    section.appendChild(txtCol);
+    container.appendChild(section);
+
+    // ── Details expand ──
+    const dtlTrigger = txtCol.querySelector('.ps-dtl-trigger');
+    const dtlBody    = txtCol.querySelector('.ps-dtl-body');
+    dtlTrigger.addEventListener('click', () => dtlBody.classList.toggle('open'));
+
+  });
+
+  // ── Reveal sections as they enter view ──
+  function _checkSections() {
+    overlayEl.querySelectorAll('.ps:not(.in-view)').forEach(section => {
+      const rect = section.getBoundingClientRect();
+      if (rect.top < window.innerHeight * 0.88) {
+        section.classList.add('in-view');
+      }
+    });
+  }
+
+  function _onScroll() { _checkSections(); }
+
+  overlayEl.addEventListener('scroll', _onScroll, { passive: true });
+  overlayEl._parallax = _onScroll;
+
+  // First section always visible — trigger immediately
+  const firstPs = container.querySelector('.ps');
+  if (firstPs) firstPs.classList.add('in-view');
+  // Remaining sections on scroll
+  setTimeout(() => _checkSections(), 80);
+}
+
+// ── Load product content into OWN cards ───────────────────────────────────────
+function loadOwnProduct(idx) {
+  const p = PRODUCTS[idx];
+  cardEls.right.querySelector('.card-value').textContent  = p.price;
+  cardEls.right.querySelector('.card-sub').textContent    = p.sub + '\n' + p.delivery;
+  cardEls.left.querySelector('.card-value').textContent   = p.notes;
+  cardEls.left.querySelector('.card-sub').textContent     = p.notesDesc;
+  cardEls.top.querySelector('.card-value').textContent    = p.longevity.split('·')[0].trim();
+  cardEls.bottom.querySelector('.card-value').textContent = p.rating;
+  cardEls.bottom.querySelector('.card-sub').textContent   = p.reviews;
+  document.querySelectorAll('.pnav-dot').forEach((d, i) =>
+    d.classList.toggle('active', i === idx)
+  );
+  // Switch 3D model if one exists for this product index
+  switchModel(idx);
+}
+
+// ── Reset to initial state ────────────────────────────────────────────────────
+function resetToInitial() {
+  // Close overlay + kill its scroll triggers
+  document.getElementById('mode-overlay').classList.remove('visible');
+  document.getElementById('product-nav').classList.remove('visible');
+  _overlayTriggers.forEach(st => st && st.kill());
+  _overlayTriggers = [];
+  const ov = document.getElementById('mode-overlay');
+  if (ov._parallax) { ov.removeEventListener('scroll', ov._parallax); ov._parallax = null; }
+  ov.querySelectorAll('.ps.in-view').forEach(s => s.classList.remove('in-view'));
+
+  bypassScrollAnim = false;
+  gsap.killTweensOf([cardEls.left, cardEls.right, cardEls.top, cardEls.bottom, ctaEl]);
+  Object.values(cardEls).forEach(el => {
+    el.classList.remove('card-primary');
+    gsap.set(el, { clearProps: 'all' });
+    // CSS .card { opacity: 0 } takes effect after clearProps clears inline styles
+  });
+  gsap.set(ctaEl, { clearProps: 'all' });
+  ctaEl.style.pointerEvents = 'none';
+  ctaEl.querySelector('.cta-primary').textContent   = 'Add to Collection';
+  ctaEl.querySelector('.cta-secondary').textContent = 'View Offers';
+  // Back to model 0 (main bottle)
+  if (activeModelIdx !== 0 && modelStates[0]) {
+    modelStates[activeModelIdx]?.modelGroup && (modelStates[activeModelIdx].modelGroup.visible = false);
+    activeModelIdx = 0;
+    modelStates[0].modelGroup.visible = true;
+    gsap.to(bottleGroup.scale, { x: 1, y: 1, z: 1, duration: 0.4, ease: 'power2.out' });
+  }
+  gsap.to(capGroup.position, { y: CAP_BASE_Y, duration: 0.9, ease: 'power2.out' });
+  gsap.to(bottleGroup.position, { y: REST_Y, duration: 0.9, ease: 'power2.out' });
+  gsap.to('#brand', { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' });
+  document.querySelectorAll('.intent-btn').forEach(b => b.classList.remove('active'));
+  pnavPrev.classList.remove('visible');
+  pnavNext.classList.remove('visible');
+  activeCap = [0.18, 0.36];
+  document.body.classList.add('scroll-locked');
+  window.scrollTo({ top: 0 });
+  // Force scroll animation to p=0 in case position was already 0 (OWN mode user never scrolled)
+  ScrollTrigger.update();
+}
+
+document.getElementById('back').addEventListener('click', e => { e.preventDefault(); resetToInitial(); });
+document.getElementById('ov-back').addEventListener('click', resetToInitial);
+
+document.querySelectorAll('.intent-btn').forEach(btn =>
+  btn.addEventListener('click', () => applyMode(btn.dataset.mode))
+);
+
+// Product prev / next arrows + dots (OWN mode)
+const pnavPrev = document.getElementById('pnav-prev');
+const pnavNext = document.getElementById('pnav-next');
+const PNAV_MAX = PRODUCTS.length - 1;
+let pnavIdx = 0;
+
+function pnavUpdate(idx) {
+  pnavIdx = idx;
+  loadOwnProduct(idx);
+  pnavPrev.classList.toggle('disabled', idx === 0);
+  pnavNext.classList.toggle('disabled', idx === PNAV_MAX);
+}
+
+pnavPrev.addEventListener('click', e => { e.stopPropagation(); if (pnavIdx > 0)        pnavUpdate(pnavIdx - 1); });
+pnavNext.addEventListener('click', e => { e.stopPropagation(); if (pnavIdx < PNAV_MAX) pnavUpdate(pnavIdx + 1); });
+
+document.querySelectorAll('.pnav-dot').forEach(dot =>
+  dot.addEventListener('click', e => { e.stopPropagation(); pnavUpdate(+dot.dataset.pidx); })
+);
+
+// ── Carousel ──────────────────────────────────────────────────────────────────
+const mfTrack    = document.getElementById('mf-track');
+const mfCardEls  = Array.from(mfTrack.querySelectorAll('.mf-card'));
+const mfPrevBtn  = document.getElementById('mf-prev');
+const mfNextBtn  = document.getElementById('mf-next');
+const CARD_STEP  = 328; // card width (300) + gap (28)
+let mfIndex = 0;
+
+function mfGoTo(idx) {
+  mfIndex = Math.max(0, Math.min(idx, mfCardEls.length - 1));
+  mfTrack.style.transform = `translateX(-${mfIndex * CARD_STEP}px)`;
+  mfCardEls.forEach((c, i) => c.classList.toggle('mf-focused', i === mfIndex));
+  mfPrevBtn.disabled = mfIndex === 0;
+  mfNextBtn.disabled = mfIndex === mfCardEls.length - 1;
+}
+
+mfPrevBtn.addEventListener('click', () => mfGoTo(mfIndex - 1));
+mfNextBtn.addEventListener('click', () => mfGoTo(mfIndex + 1));
+mfGoTo(0);
+
+// ── Mouse tilt ────────────────────────────────────────────────────────────────
+let mx = 0, my = 0;
+window.addEventListener('mousemove', e => {
+  mx = (e.clientX / innerWidth)   * 2 - 1;
+  my = -((e.clientY / innerHeight) * 2 - 1);
+});
+
+// ── Click spin ────────────────────────────────────────────────────────────────
+let spinning = false;
+window.addEventListener('click', () => {
+  if (spinning) return;
+  spinning = true;
+  gsap.to(bottleGroup.rotation, {
+    y: bottleGroup.rotation.y + Math.PI * 2,
+    duration: 1.8,
+    ease: 'sine.inOut',
+    onComplete: () => {
+      spinning = false;
+      // Resync autoRotY so render loop takes over without a jump
+      const cS = activeCap[0], cE = activeCap[1];
+      const cP = Math.max(0, Math.min(1, (scrollP - cS) / Math.max(0.001, cE - cS)));
+      autoRotY = bottleGroup.rotation.y - cP * Math.PI * 0.45;
+    }
+  });
+});
+
+// ── Render loop ────────────────────────────────────────────────────────────────
+const clock = new THREE.Clock();
+(function animate() {
+  requestAnimationFrame(animate);
+  const t = clock.getElapsedTime();
+
+  // Y rotation: slow idle + scroll-driven extra during cap separation
+  if (!spinning) {
+    autoRotY += 0.02992; // one full turn every 3.5 s at 60 fps
+    const cS = activeCap[0], cE = activeCap[1];
+    const cP = Math.max(0, Math.min(1, (scrollP - cS) / Math.max(0.001, cE - cS)));
+    bottleGroup.rotation.y = autoRotY + cP * Math.PI * 0.45;
+  }
+
+  // Mouse angle — shows top when mouse is high, bottom when low
+  bottleGroup.rotation.x += (my * 0.38  - bottleGroup.rotation.x) * 0.05;
+  bottleGroup.rotation.z += (-mx * 0.18 - bottleGroup.rotation.z) * 0.05;
+
+  // Breathing
+  outerPts.material.opacity = 0.44 + Math.sin(t * 0.35) * 0.13;
+  innerPts.material.opacity = 0.34 + Math.sin(t * 0.55 + 1.2) * 0.10;
+  goldLight.intensity       = 5.0  + Math.sin(t * 0.72) * 1.0;
+
+  updateSmoke(t);
+
+  renderer.render(scene, camera);
+})();
+
+// ── Resize ─────────────────────────────────────────────────────────────────────
+window.addEventListener('resize', () => {
+  camera.aspect = innerWidth / innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+});
+
+// ── Fluid Particle System (2D, interactive squares) ───────────────────────────
+(function () {
+  const canvas = document.getElementById('fp-canvas');
+  const ctx    = canvas.getContext('2d');
+  let W, H, particles = [];
+  const mouse = { x: -999, y: -999 };
+  const blast = { active: false, x: 0, y: 0, r: 0, max: 300 };
+
+  const COLORS = [
+    'rgba(160,126,72,0.45)',
+    'rgba(140,108,58,0.38)',
+    'rgba(178,144,86,0.42)',
+    'rgba(120,96,50,0.35)',
+  ];
+
+  class Sq {
+    constructor() { this.spawn(); this.x = Math.random() * W; this.y = Math.random() * H; }
+    spawn() {
+      this.bx = Math.random() * (W || innerWidth);
+      this.by = Math.random() * (H || innerHeight);
+      this.x  = this.bx; this.y = this.by;
+      this.vx = (Math.random() - 0.5) * 0.28;
+      this.vy = (Math.random() - 0.5) * 0.28;
+      this.evx = 0; this.evy = 0;
+      this.bvx = 0; this.bvy = 0;
+      this.sz  = Math.random() * 2.5 + 1.5;
+      this.col = COLORS[Math.floor(Math.random() * COLORS.length)];
+    }
+    tick() {
+      // Drift base position
+      this.bx += this.vx; this.by += this.vy;
+      if (this.bx < 0) this.bx = W; if (this.bx > W) this.bx = 0;
+      if (this.by < 0) this.by = H; if (this.by > H) this.by = 0;
+
+      // Mouse repulsion
+      const mdx = this.x - mouse.x, mdy = this.y - mouse.y;
+      const md  = Math.sqrt(mdx * mdx + mdy * mdy);
+      if (md < 130 && md > 0) {
+        const f = (130 - md) / 130;
+        this.evx += (mdx / md) * f * 6;
+        this.evy += (mdy / md) * f * 6;
+      }
+
+      // Blast repulsion
+      if (blast.active) {
+        const bdx = this.x - blast.x, bdy = this.y - blast.y;
+        const bd  = Math.sqrt(bdx * bdx + bdy * bdy);
+        if (bd < blast.r && bd > 0) {
+          const f = (blast.r - bd) / blast.r;
+          this.bvx += (bdx / bd) * f * 14;
+          this.bvy += (bdy / bd) * f * 14;
+        }
+      }
+
+      // Spring back + friction
+      this.evx += (this.bx - this.x) * 0.04; this.evy += (this.by - this.y) * 0.04;
+      this.evx *= 0.82; this.evy *= 0.82;
+      this.bvx *= 0.90; this.bvy *= 0.90;
+
+      this.x += this.evx + this.bvx;
+      this.y += this.evy + this.bvy;
+
+      ctx.fillStyle = this.col;
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.sz, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  function init() {
+    W = canvas.width  = innerWidth;
+    H = canvas.height = innerHeight;
+    const n = Math.floor((W * H) / 5000);
+    particles = Array.from({ length: n }, () => new Sq());
+  }
+
+  function loop() {
+    ctx.clearRect(0, 0, W, H);
+    if (blast.active) {
+      blast.r += (blast.max - blast.r) * 0.14;
+      if (blast.r > blast.max * 0.97) blast.active = false;
+    }
+    particles.forEach(p => p.tick());
+    requestAnimationFrame(loop);
+  }
+
+  window.addEventListener('resize', init);
+  window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
+  window.addEventListener('click', e => {
+    blast.active = true; blast.x = e.clientX; blast.y = e.clientY; blast.r = 0;
+  });
+
+  init(); loop();
+})();
+
+// ── Higgsfield video integration ─────────────────────────────────────────────
+(function initVideoMode() {
+  // Tag the Three.js canvas so CSS can fade it under video mode
+  const threeCanvas = document.querySelector('canvas:not([id])');
+  if (threeCanvas) threeCanvas.id = 'three-canvas';
+
+  const heroVid       = document.getElementById('hero-loop');
+  const heroIdleVid   = document.getElementById('hero-idle');
+  const idleVid       = document.getElementById('idle-loop');
+  const bleedCanvas   = document.getElementById('bleed-bg');
+  const bleedCtx      = bleedCanvas.getContext('2d');
+  const capCanvas = document.getElementById('cap-canvas');
+  const capCtx    = capCanvas.getContext('2d');
+  const scrubSec  = document.getElementById('scrub-section');
+  const brandEl   = document.getElementById('brand');
+
+  const CAP_FRAMES = 101;
+  const capImages  = new Array(CAP_FRAMES);
+  let   loadCount  = 0;
+  let   framesReady = false;
+  let   preloadStarted = false;
+
+  function preloadFrames() {
+    if (preloadStarted) return;
+    preloadStarted = true;
+    for (let i = 0; i < CAP_FRAMES; i++) {
+      const img = new Image();
+      img.src = `cap-frames/frame-${String(i + 1).padStart(3, '0')}.jpg`;
+      img.onload = () => {
+        loadCount++;
+        if (loadCount === CAP_FRAMES) {
+          framesReady = true;
+          drawFrame(0);
+        }
+      };
+      capImages[i] = img;
+    }
+  }
+
+  function resizeCanvas() {
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    capCanvas.width  = window.innerWidth  * dpr;
+    capCanvas.height = window.innerHeight * dpr;
+    capCanvas.style.width  = window.innerWidth  + 'px';
+    capCanvas.style.height = window.innerHeight + 'px';
+    if (framesReady) drawFrame(lastFrame >= 0 ? lastFrame : 0);
+  }
+
+  function drawFrame(idx) {
+    idx = Math.max(0, Math.min(CAP_FRAMES - 1, idx | 0));
+    const img = capImages[idx];
+    if (!img || !img.complete || !img.naturalWidth) return;
+    const cw = capCanvas.width, ch = capCanvas.height;
+    const iw = img.naturalWidth, ih = img.naturalHeight;
+    // contain fit — show full frame, letterbox sides with bg
+    const s = Math.min(cw / iw, ch / ih);
+    const w = iw * s, h = ih * s;
+    capCtx.clearRect(0, 0, cw, ch);
+    capCtx.drawImage(img, (cw - w) / 2, (ch - h) / 2, w, h);
+  }
+
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
+
+  let ownScrolling = false;
+  let lastFrame    = -1;
+  let rafQueued    = false;
+
+  function onScroll() {
+    if (!ownScrolling) return;
+    if (rafQueued) return;
+    rafQueued = true;
+    requestAnimationFrame(() => {
+      rafQueued = false;
+      const rect = scrubSec.getBoundingClientRect();
+      const span = scrubSec.offsetHeight - window.innerHeight;
+      const p    = Math.max(0, Math.min(1, -rect.top / Math.max(1, span)));
+      const fr   = Math.round(p * (CAP_FRAMES - 1));
+      if (fr !== lastFrame) {
+        drawFrame(fr);
+        lastFrame = fr;
+      }
+      const open = p >= 0.97;
+      if (open !== document.body.classList.contains('cap-open')) {
+        document.body.classList.toggle('cap-open', open);
+        if (open) { try { idleVid.currentTime = 0; idleVid.play(); } catch (_) {} }
+      }
+    });
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  // Override "Own the essence" click → enter scroll-controlled flow
+  document.querySelectorAll('.intent-btn[data-mode="own"]').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopImmediatePropagation();
+      e.preventDefault();
+      enterOwnScroll();
+    }, { capture: true });
+  });
+
+  function enterOwnScroll() {
+    preloadFrames();
+    document.body.classList.remove('scroll-locked');
+    document.body.classList.add('own-scroll');
+    document.querySelectorAll('.intent-btn').forEach(b =>
+      b.classList.toggle('active', b.dataset.mode === 'own')
+    );
+    if (window.gsap) {
+      window.gsap.to('#brand', { opacity: 0, y: -18, duration: 0.55, ease: 'power2.in' });
+      window.gsap.to('#intent-selector', { opacity: 0, duration: 0.4, ease: 'power2.in', onComplete: () => {
+        document.getElementById('intent-selector').style.pointerEvents = 'none';
+      }});
+    }
+    ownScrolling = true;
+    lastFrame = -1;
+    // Smooth scroll into the scrub section after a beat (lets the canvas fade in)
+    setTimeout(() => {
+      scrubSec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 320);
+  }
+
+  function exitOwnScroll() {
+    ownScrolling = false;
+    lastFrame = -1;
+    document.body.classList.remove('own-scroll', 'cap-open');
+    document.body.classList.add('scroll-locked');
+    try { idleVid.pause(); } catch (_) {}
+    if (window.gsap) {
+      window.gsap.to('#brand', { opacity: 1, y: 0, duration: 0.7, ease: 'power2.out' });
+      const isel = document.getElementById('intent-selector');
+      isel.style.pointerEvents = 'auto';
+      window.gsap.to('#intent-selector', { opacity: 1, duration: 0.55, ease: 'power2.out' });
+    }
+    document.querySelectorAll('.intent-btn').forEach(b => b.classList.remove('active'));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // Wire back button to also exit own scroll mode (bubble-phase: runs after resetToInitial)
+  document.getElementById('back').addEventListener('click', () => {
+    if (document.body.classList.contains('own-scroll')) exitOwnScroll();
+  });
+
+  // Hotspot click → briefly highlight its paired card
+  document.querySelectorAll('.hotspot').forEach(h => {
+    h.addEventListener('click', () => {
+      const card = document.getElementById('card-' + h.dataset.card);
+      if (!card) return;
+      card.classList.add('card-primary');
+      setTimeout(() => card.classList.remove('card-primary'), 1400);
+    });
+  });
+
+  // ── Compute video box (object-fit:contain logic) and expose as CSS vars ────
+  const VIDEO_AR = 9 / 16;  // matches generated assets
+
+  function updateVideoBox() {
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const screenAR = vw / vh;
+    let vbW, vbH;
+    if (screenAR > VIDEO_AR) {
+      vbH = vh; vbW = vh * VIDEO_AR;
+    } else {
+      vbW = vw; vbH = vw / VIDEO_AR;
+    }
+    const vbL = (vw - vbW) / 2;
+    const vbT = (vh - vbH) / 2;
+    const r = document.documentElement.style;
+    r.setProperty('--vb-l', vbL + 'px');
+    r.setProperty('--vb-t', vbT + 'px');
+    r.setProperty('--vb-w', vbW + 'px');
+    r.setProperty('--vb-h', vbH + 'px');
+
+    // Soft masks: side fade (blend horizontal edges) + bottom fade (hide
+    // the glossy floor reflection rendered at the bottom of the video).
+    const FADE  = 6;   // % of viewport: fade falloff distance
+    const INSET = 2;   // % of viewport: where opacity becomes fully solid
+
+    const masks = [];
+
+    if (vbL > 0.5) {
+      const lPct = (vbL / vw) * 100;
+      const rPct = ((vbL + vbW) / vw) * 100;
+      masks.push(`linear-gradient(to right,
+        transparent ${Math.max(0, lPct - FADE)}%,
+        black ${lPct + INSET}%,
+        black ${rPct - INSET}%,
+        transparent ${Math.min(100, rPct + FADE)}%)`);
+    } else if (vbT > 0.5) {
+      const tPct = (vbT / vh) * 100;
+      const bPct = ((vbT + vbH) / vh) * 100;
+      masks.push(`linear-gradient(to bottom,
+        transparent ${Math.max(0, tPct - FADE)}%,
+        black ${tPct + INSET}%,
+        black ${bPct - INSET}%,
+        transparent ${Math.min(100, bPct + FADE)}%)`);
+    }
+
+    // Crop the bottom 22% of the video (where the floor reflection lives)
+    // into a soft fade so it bleeds into the page bg.
+    const bottomCrop = (vbT + vbH * 0.74) / vh * 100;
+    const bottomEnd  = (vbT + vbH * 0.92) / vh * 100;
+    masks.push(`linear-gradient(to bottom,
+      black ${Math.max(0, bottomCrop - 8)}%,
+      black ${bottomCrop}%,
+      transparent ${Math.min(100, bottomEnd)}%)`);
+
+    const maskStr = masks.join(', ');
+
+    ['hero-loop', 'hero-idle', 'idle-loop', 'cap-canvas'].forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.style.webkitMaskImage = maskStr;
+      el.style.maskImage       = maskStr;
+      if (masks.length > 1) {
+        el.style.webkitMaskComposite = 'source-in';
+        el.style.maskComposite       = 'intersect';
+      } else {
+        el.style.webkitMaskComposite = '';
+        el.style.maskComposite       = '';
+      }
+    });
+  }
+  updateVideoBox();
+  window.addEventListener('resize', updateVideoBox);
+
+  // ── Sample edge color of hero video and apply as page bg ────────────────────
+  const sampler = document.createElement('canvas');
+  sampler.width = 80; sampler.height = 80;
+  const sctx = sampler.getContext('2d', { willReadFrequently: true });
+
+  function sampleAndApplyBg() {
+    if (!heroVid.videoWidth) return;
+    try {
+      // Draw the top-left 80x80 corner of the video frame
+      sctx.drawImage(heroVid, 0, 0, 80, 80, 0, 0, 80, 80);
+      const d = sctx.getImageData(4, 4, 1, 1).data;
+      const r = d[0], g = d[1], b = d[2];
+      // Slightly nudge toward neutral cream so any noise doesn't tint the page
+      document.body.style.backgroundColor = `rgb(${r},${g},${b})`;
+      const bgEl = document.getElementById('bg');
+      if (bgEl) {
+        // Keep the warm radial in the center but with sampled cream as base
+        bgEl.style.background =
+          'radial-gradient(ellipse 55% 75% at 50% 55%,' +
+          ' rgba(178,118,62,0.45) 0%,' +
+          ' rgba(212,170,124,0.28) 22%,' +
+          ' rgba(225,200,168,0.10) 45%,' +
+          ' transparent 68%),' +
+          `rgb(${r},${g},${b})`;
+      }
+    } catch (e) { /* CORS or not ready */ }
+  }
+
+  heroVid.addEventListener('loadeddata', () => {
+    sampleAndApplyBg();
+    // re-sample once more after first frame is fully painted
+    setTimeout(sampleAndApplyBg, 200);
+  });
+  heroVid.addEventListener('canplay', sampleAndApplyBg);
+
+  // Crossfade hero-loop → hero-idle when the intro ends
+  heroVid.addEventListener('ended', () => {
+    try {
+      heroIdleVid.currentTime = 0;
+      heroIdleVid.play();
+    } catch (_) {}
+    document.body.classList.add('hero-idle');
+  });
+
+  // ── Edge-bleed background ────────────────────────────────────────────────
+  // Pick whichever foreground video is currently visible
+  function currentBleedSrc() {
+    if (document.body.classList.contains('own-scroll') &&
+        document.body.classList.contains('cap-open')) return idleVid;
+    if (document.body.classList.contains('hero-idle')) return heroIdleVid;
+    return heroVid;
+  }
+
+  let bleedLast = 0;
+  function bleedTick(t) {
+    if (t - bleedLast > 80) {  // ~12 fps; cheap enough, fluid enough
+      const v = currentBleedSrc();
+      if (v && v.readyState >= 2 && v.videoWidth > 0) {
+        const vw = window.innerWidth;
+        const vh = window.innerHeight;
+        // Match canvas physical size to viewport (no DPR boost — we blur anyway)
+        if (bleedCanvas.width !== vw || bleedCanvas.height !== vh) {
+          bleedCanvas.width  = vw;
+          bleedCanvas.height = vh;
+        }
+        const screenAR = vw / vh;
+        let vbW, vbH, vbL, vbT;
+        if (screenAR > VIDEO_AR) {
+          vbH = vh; vbW = vh * VIDEO_AR; vbL = (vw - vbW) / 2; vbT = 0;
+        } else {
+          vbW = vw; vbH = vw / VIDEO_AR; vbL = 0; vbT = (vh - vbH) / 2;
+        }
+        const vidW = v.videoWidth, vidH = v.videoHeight;
+
+        bleedCtx.clearRect(0, 0, vw, vh);
+
+        // 1. Bottom bleed (drawn FIRST so the side bars overlay corners)
+        //    Sample the row at y=74% of the video (just above the floor reflection)
+        //    and stretch DOWN. This fills the area exposed by the bottom mask fade.
+        const sampleY = Math.floor(vidH * 0.74);
+        const bottomTop = vbT + vbH * 0.74;
+        bleedCtx.drawImage(v, 0, sampleY, vidW, 4, vbL, bottomTop, vbW, vh - bottomTop);
+
+        // 2. Top bleed (in case the video edge meets the page above too)
+        bleedCtx.drawImage(v, 0, 2, vidW, 4, vbL, 0, vbW, vbT + Math.max(0, vbH * 0.04));
+
+        if (vbL > 0) {
+          // 3. Left bar: stretch leftmost 6px column across the left side
+          bleedCtx.drawImage(v, 0, 0, 6, vidH, 0, 0, vbL + 24, vh);
+          // 4. Right bar
+          bleedCtx.drawImage(v, vidW - 6, 0, 6, vidH, vbL + vbW - 24, 0, vw - vbL - vbW + 24, vh);
+        } else if (vbT > 0) {
+          // Portrait viewport: top/bottom bars
+          bleedCtx.drawImage(v, 0, 0, vidW, 6, 0, 0, vw, vbT + 20);
+          bleedCtx.drawImage(v, 0, vidH - 6, vidW, 6, 0, vbT + vbH - 20, vw, vh - vbT - vbH + 20);
+        }
+      }
+      bleedLast = t;
+    }
+    requestAnimationFrame(bleedTick);
+  }
+  requestAnimationFrame(bleedTick);
+
+  // Engage video mode
+  document.body.classList.add('video-mode');
+})();
+</script>
+</body>
+</html>
