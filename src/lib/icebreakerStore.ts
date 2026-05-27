@@ -39,16 +39,17 @@ const SUBS_KEY = "allhands:icebreaker:submissions";
 
 const DEFAULT_DURATION_MS = 30_000;
 
-const hasUpstash =
-  !!process.env.UPSTASH_REDIS_REST_URL &&
-  !!process.env.UPSTASH_REDIS_REST_TOKEN;
+// Vercel Marketplace injects KV_REST_API_* for Upstash; the SDK's own
+// naming is UPSTASH_REDIS_REST_*. Accept either.
+const REDIS_URL =
+  process.env.UPSTASH_REDIS_REST_URL ?? process.env.KV_REST_API_URL;
+const REDIS_TOKEN =
+  process.env.UPSTASH_REDIS_REST_TOKEN ?? process.env.KV_REST_API_TOKEN;
 
-const redis = hasUpstash
-  ? new Redis({
-      url: process.env.UPSTASH_REDIS_REST_URL!,
-      token: process.env.UPSTASH_REDIS_REST_TOKEN!,
-    })
-  : null;
+const redis =
+  REDIS_URL && REDIS_TOKEN
+    ? new Redis({ url: REDIS_URL, token: REDIS_TOKEN })
+    : null;
 
 // ─── in-memory fallback ──────────────────────────────────────────────────
 type MemShape = {

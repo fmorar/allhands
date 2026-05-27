@@ -29,16 +29,18 @@ const VALID_IDS = new Set<string>(MOODS.map((m) => m.id));
 const HASH_KEY = "allhands:mood:counts";
 const VERSION_KEY = "allhands:mood:version";
 
-const hasUpstash =
-  !!process.env.UPSTASH_REDIS_REST_URL &&
-  !!process.env.UPSTASH_REDIS_REST_TOKEN;
+// Vercel Marketplace can inject either UPSTASH_REDIS_REST_* (Upstash's own
+// naming) or KV_REST_API_* (legacy Vercel KV naming, still used by the
+// Marketplace integration). Accept either.
+const REDIS_URL =
+  process.env.UPSTASH_REDIS_REST_URL ?? process.env.KV_REST_API_URL;
+const REDIS_TOKEN =
+  process.env.UPSTASH_REDIS_REST_TOKEN ?? process.env.KV_REST_API_TOKEN;
 
-const redis = hasUpstash
-  ? new Redis({
-      url: process.env.UPSTASH_REDIS_REST_URL!,
-      token: process.env.UPSTASH_REDIS_REST_TOKEN!,
-    })
-  : null;
+const redis =
+  REDIS_URL && REDIS_TOKEN
+    ? new Redis({ url: REDIS_URL, token: REDIS_TOKEN })
+    : null;
 
 // ─────────────────────────── in-memory fallback ───────────────────────────
 type StoreShape = { counts: Record<MoodId, number>; version: number };
