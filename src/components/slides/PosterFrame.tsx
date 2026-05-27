@@ -142,32 +142,31 @@ const PROFILES: Record<DsPatternName, Profile> = {
       { left: 0, right: 0, bottom: 110, w: 0, h: STRIP_H },
     ],
   },
+  // "Column" patterns: placed asymmetrically (one side) so they feel like
+  // intentional accents, not framing brackets.
   zigzag: {
     kind: "column",
     placements: [
-      { left: 24, top: 60, bottom: 130, w: COLUMN_W, h: 0 },
-      { right: 24, top: 60, bottom: 130, w: COLUMN_W, h: 0 },
+      { left: 24, top: 60, bottom: 200, w: COLUMN_W, h: 0 },
     ],
   },
   "zigzag-simple": {
     kind: "column",
     placements: [
-      { left: 36, top: 60, bottom: 130, w: 160, h: 0 },
-      { right: 36, top: 60, bottom: 130, w: 160, h: 0 },
+      { right: 36, top: 60, bottom: 200, w: 160, h: 0 },
     ],
   },
   curves: {
     kind: "column",
     placements: [
-      { left: 24, top: 60, bottom: 130, w: COLUMN_W, h: 0 },
-      { right: 24, top: 60, bottom: 130, w: COLUMN_W, h: 0 },
+      { left: 24, top: 100, bottom: 220, w: COLUMN_W, h: 0 },
     ],
   },
   leafs: {
     kind: "column",
     placements: [
-      { left: 24, top: 60, bottom: 130, w: COLUMN_W, h: 0 },
-      { right: 24, top: 60, bottom: 130, w: COLUMN_W, h: 0 },
+      { left: 24, top: 60, bottom: 200, w: COLUMN_W, h: 0 },
+      { right: 30, top: 280, w: 160, h: 240 },
     ],
   },
   lines: {

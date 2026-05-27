@@ -92,7 +92,7 @@ const raw: RawSlide[] = [
     build: () => (
       <IndexSlide
         variant="cream"
-        patternName="leafs"
+        patternName="sparkle"
         bgImage="/bg/Textura.png"
         intro="Lo que vamos a cubrir hoy."
         sections={[
